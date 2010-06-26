@@ -1,0 +1,28 @@
+lyMediaFolder:
+  media:
+    name: media
+    children:
+      sub1:
+        name: testsub1
+      sub2:
+        name: testsub2
+
+lyMediaAsset:
+  asset1:
+    Folder: media
+    filename: asset1.png
+    description: asset1
+    type: image/png
+    created_at:  '<?php echo date('Y-m-d H:i:s', strtotime('-1 day')) ?>'
+  asset2:
+    Folder: media
+    filename: asset2.png
+    description: asset2
+    type: image/png
+    created_at: '<?php echo date('Y-m-d H:i:s',strtotime('-3 hours')) ?>'
+  asset3:
+    Folder: media
+    filename: asset3.png
+    description: asset3
+    type: image/png
+    

@@ -1,0 +1,160 @@
+#lymedia_icons
+{
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #b0b0b0;
+}
+#lymedia_folder_path
+{
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #b0b0b0;
+  background-color: #f5f5f5;
+}
+#lymedia_folder_path .view
+{
+  float: right;
+}
+#lymedia_folder_menu
+{
+  width: 200px;
+  height: 140px;
+  float:right;
+  border: 1px solid #d0d0d0;
+}
+.lymedia_folder_name
+{
+  margin-left: 12px;
+}
+.lymedia_folder_name img
+{
+  vertical-align: middle;
+}
+.lymedia_folder_name a
+{
+  margin-left: 5px;
+}
+.lymedia_folder_actions ul li
+{
+  padding-left: 0;
+  margin:0;
+  list-style-image: none;
+  list-style-type: none;
+}
+#lymedia_folder_menu .lymedia_folder_actions ul li a
+{
+  padding-left: 0;
+  background: transparent;
+}
+.lymedia_up, .lymedia_folder, .lymedia_asset
+{
+  float: left;
+  margin: 5px 0 0 5px;
+  text-align: center;
+  padding: 2px;
+}
+.lymedia_asset, .lymedia_folder
+{
+  border: 1px solid #d0d0d0;
+  background-color: #f5f5f5;
+  width: 100px;
+}
+.lymedia_asset_frame
+{
+  width: 84px;
+  height: 84px;
+  padding: 3px;
+  border: 1px solid #b0b0b0;
+  background-color: #fff;
+  margin: auto;
+}
+
+.lymedia_caption
+{
+  font-size: 80%;
+  text-align: center;
+}
+.lymedia_iconbar
+{
+  margin-top: 5px;
+  width: 100%;
+  text-align: right;
+  font-size: 85%;
+}
+#sf_admin_container ul.lymedia_actions, #sf_admin_container ul.lymedia_actions_icons
+{
+  margin: 0;
+  padding: 0;
+}
+#sf_admin_container ul.lymedia_actions_icons li
+{
+  display: inline;
+}
+#sf_admin_container ul.lymedia_actions_icons li a
+{
+  background: transparent;
+  padding: 0;
+}
+
+#sf_admin_container ul.lymedia_actions li
+{
+  display: inline;
+}
+#sf_admin_container ul.lymedia_actions li a
+{
+  padding-left: 16px;
+}
+#sf_admin_container ul.lymedia_actions li.edit a
+{
+  background: transparent url(../images/edit.png) no-repeat scroll left center;
+}
+#sf_admin_container ul.lymedia_actions li.delete a
+{
+  background: transparent url(../images/delete.png) no-repeat scroll left center;
+}
+#sf_admin_container #lymedia_new_folder label
+{
+  display: inline;
+  float: none;
+  padding: 0;
+}
+#sf_admin_container ul.sf_admin_actions
+{
+  float: left;
+  margin: 0 15px 0 0;
+  clear: left;
+}
+.sf_admin_filter
+{
+  margin-left: 5px;
+}
+.info_field_label
+{
+  color: #666666;
+  width: 8em;
+  padding-right: 1em;
+  float: left;
+}
+.lymedia_image_info
+{
+  margin-top: 10px;
+}
+.lymedia_image_info .info_field_label
+{
+  width: 7em;
+}
+#sf_fieldset_none
+{
+  width: 60%;
+  float: left;
+  margin-right: 5px;
+}
+#sf_fieldset_asset
+{
+  width: 39%;
+}
+.clear
+{
+  clear: both;
+}
+

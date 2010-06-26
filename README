@@ -1,0 +1,3 @@
+The plugin offers a simple web interface to upload and manage images, documents and other media files directly from the backend of your symfony application. File upload and file browsing features can be easily integrated into the TinyMCE editor.
+
+lyMediaManagerPlugin is inspired to sfAssetsLibraryPlugin for Propel, but some of its features have not been ported yet while others have been reimplemented in a different way.

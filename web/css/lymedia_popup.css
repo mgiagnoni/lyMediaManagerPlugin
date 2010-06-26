@@ -1,0 +1,48 @@
+.lymedia_selectbox
+{
+  padding: 5px;
+  margin-left: 10px;
+  width: 400px;
+}
+.lymedia_popup_info
+{
+  visibility: hidden;
+  position: absolute;
+}
+#lymedia_thumb_menu
+{
+  font-size: 100%;
+  background: #e0e0e0;
+  width: 140px;
+  padding-bottom: 1px;
+  border: 1px solid #a0a0a0;
+  position: absolute;
+  z-index: 999;
+  visibility: hidden;
+}
+#lymedia_thumb_menu .title
+{
+  padding: 5px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid #a0a0a0;
+}
+#lymedia_thumb_menu ._cancel
+{
+  color: #ff0000;
+}
+#lymedia_thumb_menu span
+{
+  text-align: center;
+  margin: 1px 1px 0 1px;
+  padding: 4px;
+  background: #f0f0f0;
+  display: block;
+  cursor: pointer;
+}
+#lymedia_thumb_menu span:hover
+{
+  background: #e0e0e0;
+}
+
+

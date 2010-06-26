@@ -1,0 +1,25 @@
+generator:
+  class: sfDoctrineGenerator
+  param:
+    model_class:           lyMediaAsset
+    theme:                 admin
+    non_verbose_templates: true
+    with_show:             false
+    singular:              ~
+    plural:                ~
+    route_prefix:          ly_media_asset
+    with_doctrine_route:     1
+
+    config:
+      list:
+        title: Media Manager
+        display: [_td_image, title, description, type]
+        actions:
+          _new: ~
+      form: ~
+      edit:
+        display:
+          "NONE": [_field_path, folder_id, filename, title, description, author, copyright]
+          "Asset": [_field_image]
+      new:
+        title: New media

@@ -1,0 +1,52 @@
+lyMediaAsset:
+  actAs:
+    Timestampable: ~
+  columns:
+    id:
+      type: integer(4)
+      primary: true
+      autoincrement: true
+    folder_id:
+      type: integer(4)
+      notnull: true
+    filename:
+      type: string(255)
+    title:
+      type: string(255)
+    description:
+      type: clob
+    author:
+      type: string(255)
+    copyright:
+      type: string(100)
+    type:
+      type: string(80)
+    filesize:
+      type: integer(4)
+  relations:
+    Folder:
+      class: lyMediaFolder
+      local: folder_id
+      foreign: id
+      foreignAlias: Assets
+      onDelete: CASCADE
+      
+lyMediaFolder:
+  actAs:
+    Timestampable: ~
+    NestedSet:
+      hasManyRoots: false
+  columns:
+    id:
+      type: integer(4)
+      primary: true
+      autoincrement: true
+    name:
+      type: string(255)
+      notnull: true
+    title:
+      type: string(255)
+    description:
+      type: clob
+    relative_path:
+      type: string(255)

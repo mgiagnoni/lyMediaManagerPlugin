@@ -1,0 +1,20 @@
+generator:
+  class: sfDoctrineGenerator
+  param:
+    model_class:           lyMediaFolder
+    theme:                 admin
+    non_verbose_templates: true
+    with_show:             false
+    singular:              ~
+    plural:                ~
+    route_prefix:          ly_media_folder
+    with_doctrine_route:     1
+
+    config:
+      list:
+        actions:
+          _new: ~
+      form: ~
+      edit:
+        display: [_field_path, parent_id, name, title, description]
+      new: ~

@@ -1,0 +1,2 @@
+<?php echo $helper->linkToNew(array(  'params' =>   array(  ),  'class_suffix' => 'new',  'label' => 'New',)) ?>
+<li class="sf_admin_action_new_folder"><?php echo link_to(__('Add folder'),'@ly_media_folder_new'); ?></li>
