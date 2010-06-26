@@ -4,7 +4,7 @@ $ly_media_asset = $form->getObject();
 ?>
 <div class="sf_admin_form_row">
   <div class="lymedia_image_field">
-    <?php echo thumbnail_image_tag($ly_media_asset, 'medium', 'alt=' . $ly_media_asset->getTitle());?>
+    <?php echo thumbnail_image_tag($ly_media_asset, null, 'medium', 'alt=' . $ly_media_asset->getTitle());?>
   </div>
   <div class="lymedia_image_info">
     <div class="info_field_label mime-type"><?php echo __('Mime type'); ?></div>

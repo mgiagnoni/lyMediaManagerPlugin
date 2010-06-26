@@ -198,11 +198,11 @@ class lyMediaTools
     ));
   }
 
-  public static function getThumbnailURI($asset, $type = 'small')
+  public static function getThumbnailURI($asset, $folder_path, $type = 'small')
   {
     if($asset->supportsThumbnails())
     {
-      $img = '/' . $asset->getFolderPath() . self::getThumbnailFolder() . '/' . self::getThumbnailFile($asset, $type);
+      $img = '/' . (isset($folder_path) ? $folder_path : $asset->getFolderPath()) . self::getThumbnailFolder() . '/' . self::getThumbnailFile($asset, $type);
     }
     else
     {

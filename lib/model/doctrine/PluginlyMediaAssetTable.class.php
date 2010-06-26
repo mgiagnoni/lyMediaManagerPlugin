@@ -17,5 +17,17 @@
  */
 class PluginlyMediaAssetTable extends Doctrine_Table
 {
+  /**
+   * Retrieves a list of assets.
+   * table_method in list configuration of lyMediaAsset module
+   *
+   * @param Doctrine_Query $q
+   */
+  public function retrieveAssetList(Doctrine_Query $q)
+  {
+    $q->innerJoin($q->getRootAlias() . '.Folder f');
 
+    return $q;
+
+  }
 }

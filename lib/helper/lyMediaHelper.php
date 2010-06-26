@@ -32,7 +32,7 @@ function path_links($folder, $popup = false, $separator = ' / ')
   return implode($separator, $path);
 }
 
-function thumbnail_image_tag($asset, $type ='small', $options = array())
+function thumbnail_image_tag($asset, $folder_path = null, $type ='small', $options = array())
 {
-  return image_tag(lyMediaTools::getThumbnailURI($asset, $type), $options);
+  return image_tag(lyMediaTools::getThumbnailURI($asset, $folder_path, $type), $options);
 }

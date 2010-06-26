@@ -12,7 +12,7 @@
       <?php endforeach; ?>
     </div>
     <?php endif; ?>
-    <?php echo thumbnail_image_tag($asset, 'small', 'alt=asset title=' . $asset->getTitle()); ?>
+    <?php echo thumbnail_image_tag($asset, $folder->getRelativePath(), 'small', 'alt=asset title=' . $asset->getTitle()); ?>
   </div>
   <div class="lymedia_caption">
     <?php echo lyMediaTools::formatAssetCaption($asset); ?>
