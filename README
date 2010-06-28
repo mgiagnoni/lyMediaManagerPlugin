@@ -1,3 +1,111 @@
+# lyMediaManagerPlugin
+
 The plugin offers a simple web interface to upload and manage images, documents and other media files directly from the backend of your symfony application. File upload and file browsing features can be easily integrated into the TinyMCE editor.
 
 lyMediaManagerPlugin is inspired to sfAssetsLibraryPlugin for Propel, but some of its features have not been ported yet while others have been reimplemented in a different way.
+
+This plugin is being developed to be included in Lyra CMS (also under development), but it's a standard plugin that can be used in any symfony project with no dependencies except sfThumbnailPlugin, needed to generate thumbnails.
+
+This is currently a beta release, play with it, please report me any error and feel free to suggest improvements
+
+##Installation
+
+###Automatic installation
+
+lyMediaManagerPlugin can be quickly installed with the symfony command `plugin:install` (you must have PEAR installed on your system).
+
+    php symfony plugin:install --stability=beta lyMediaManagerPlugin
+
+sfThumbnailPlugin is also needed to generate thumbnails of images.
+
+    php symfony plugin:install sfThumbnailPlugin
+
+###Manual installation
+
+Alternatively you can uncompress the .tgz package inside the `plugins` directory of your symfony project. If you have Subversion installed you can also install the plugin by checking out the source code from the repository: `cd` to the `plugins` directory of your symfony project and execute
+
+    svn checkout http://svn.symfony-project.com/plugins/lyMediaManagerPlugin/trunk lyMediaManagerPlugin
+
+If you choose the manual installation another two steps are needed. Plugins must be enabled in your project configuration class. Example:
+
+    //%project_dir%/config/ProjectConfigurationClas.class.php
+
+    ...
+    public function setup()
+    {
+      $this->enablePlugins('sfDoctrinePlugin');
+      $this->enablePlugins('sfThumbnailPlugin');
+      $this->enablePlugins('lyMediaManagerPlugin');
+    }
+    ...
+Plugin assets must be published with the following symfony command
+
+    php symfony plugin:publish-assets
+
+### Building models and tables
+
+Then we need to generate plugin model classes and corresponding database tables.
+
+    php symfony doctrine:build --all
+
+Keep in mind that this will erase all your data and rebuild everything from scratch. Before executing the statement above you may want to backup your database and restore it thereafter.
+
+### Enabling plugin modules
+
+lyMediaManagerPlugin contains two modules: lyMediaAsset, lyMediaFolder. Both must be enabled in `settings.yml` file (usually in your backend application). Example.
+
+    #%project_dir%/apps/backend/config/settings.yml
+    
+    all:
+      .settings:
+        enabled_modules: [default, lyMediaAsset, lyMediaFolder]
+
+### Initializing folder tree
+
+lyMediaManagerPlugin provides a custom task to create the media library root directory inside the `web` directory of your project and the corresponding root node in the database. By default this directory will be called `media`: see configuration below if you prefer a different name.
+
+    php symfony media:create-root
+
+This command should be executed by an user of the same group of the http server, if this is not possible chmod/chown the media library root directory so that is writable by the http server.
+
+## Configuration
+
+Some configuration parameters can be set inside the `app.yml` file of your application. Example.
+
+    #%project_dir%/apps/backend/config/app.yml
+
+    all:
+      lyMediaManager:
+        # root directory name (used by task media:create-root)
+        media_root: media
+        # thumbnails settings
+        thumbnails:
+          small:
+            width: 84
+            height: 84
+            # forces thumbnail size to fixed width/height values
+            shave: true
+          medium:
+            width: 194
+            height: 152
+        # name of folder where thumbnails will be created
+        thumbnail_folder: thumbs
+        # thumbnails will be created only for these mime-types
+        create_thumbnails_for: [image/jpeg,image/png,image/gif]
+        # only files with these extensions can be uploaded
+        allowed_extensions: [jpg,png,gif,txt]
+        # only files of these mime-types can be uploaded
+        mime_types: [image/jpeg,image/png,image/gif,text/plain]
+
+Note: `small` and `medium` size thumbnails are used by the plugin itself and should not be removed. More thumbnails of desired sizes can be created for use in your application.
+
+Finally visit http://localhost/backend.php/ly_media_asset (assuming that you are testing the plugin on localhost and you have enabled modules in backend application).
+
+## Todo
+
+* Complete this README :)
+* Add paging / sorting to icons and list views
+* Add a task to import files from a folder
+* Improve user interface
+* Support other plugins for thumbnail generation (sfImageTransformPlugin)
+* Add more tests
