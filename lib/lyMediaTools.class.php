@@ -37,7 +37,7 @@ class lyMediaTools
   public static function deleteAssetFiles($path, $filename, $thumbs = false)
   {
     $file = self::getBasePath() . $path . $filename;
-    
+
     if(file_exists($file))
     {
       unlink($file);
@@ -180,10 +180,11 @@ class lyMediaTools
     return trim(sfConfig::get('app_lyMediaManager_thumbnail_folder', 'thumbs'), "\/");
   }
 
-  public static function getThumbnailPath($path, $filename, $thumbnailType)
+  public static function getThumbnailPath($path, $filename, $thumbnailType, $create = true)
   {
     $folder = self::getBasePath() . $path . self::getThumbnailFolder();
-    if(!file_exists($folder))
+    
+    if($create && !file_exists($folder))
     {
       self::createFolder($folder);
     }
@@ -217,9 +218,10 @@ class lyMediaTools
     $src = self::getBasePath() . $old_path . (isset($old_fname) ? $old_fname : $new_fname);
     $dest = self::getBasePath() . $new_path . $new_fname;
 
-    if(is_dir($new_path) && !file_exists($dest))
+    if(!file_exists($dest))
     {
       rename($src, $dest);
+      
       if($thumbs)
       {
         self::moveThumbnails($old_path, $old_fname, $new_path, $new_fname);

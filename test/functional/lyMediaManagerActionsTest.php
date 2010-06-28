@@ -1,11 +1,29 @@
 <?php
+/*
+ * This file is part of the lyMediaManagerPlugin package.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
+/**
+ * Functional tests
+ *
+ * @package     lyMediaManagerPlugin
+ * @subpackage  functional tests
+ * @copyright   Copyright (C) 2010 Massimo Giagnoni.
+ * @license     http://www.symfony-project.org/license MIT
+ * @version     SVN: $Id$
+ */
 include dirname(__FILE__).'/../bootstrap/functional.php';
 
 $subf1 = Doctrine::getTable('lyMediaFolder')
   ->findOneByName('testsub1');
 
-$browser = new sfTestFunctional(new sfBrowser());
+$subf2 = Doctrine::getTable('lyMediaFolder')
+  ->findOneByName('testsub2');
+
+$browser = new lyMediaTestFunctional(new sfBrowser());
 $browser->setTester('doctrine', 'sfTesterDoctrine');
 
 $browser->
@@ -71,31 +89,9 @@ $browser->
   end()->
 
   info('  2.4 - Submit valid values')->
-  click('li.sf_admin_action_save input', array('ly_media_folder' => array(
+  saveNew('lyMediaFolder', array('ly_media_folder' => array(
     'name' => 'testsub3'
-  ) ))->
-
-  with('request')->begin()->
-    isParameter('module', 'lyMediaFolder')->
-    isParameter('action', 'create')->
-  end()->
-
-  with('form')->
-    hasErrors(false)->
-
-  with('response')->
-    isRedirected()->
-
-  followRedirect()->
-  with('request')->begin()->
-    isParameter('module', 'lyMediaFolder')->
-    isParameter('action', 'edit')->
-  end()->
-
-  with('response')->begin()->
-    isStatusCode(200)->
-    checkForm('lyMediaFolderForm')->
-  end()->
+  )))->
 
   info('  2.5 - Check created folder')->
   with('doctrine')->begin()->
@@ -107,23 +103,10 @@ $browser->
   end()->
 
   info('3 - Edit folder name and parent')->
-  click('li.sf_admin_action_save input', array('ly_media_folder' => array(
+  saveEdit('lyMediaFolder', array('ly_media_folder' => array(
     'name' => 'testsub1-1',
     'parent_id' => $subf1->getId()
-  ) ))->
-
-  with('request')->begin()->
-    isParameter('module', 'lyMediaFolder')->
-    isParameter('action', 'update')->
-  end()->
-
-  with('form')->
-    hasErrors(false)->
-  
-  with('response')->
-    isRedirected()->
-
-  followRedirect()->
+  )))->
 
   info('  3.1 - Check edited folder')->
   with('doctrine')->begin()->
@@ -172,36 +155,13 @@ $browser->
   end()->
 
   info('  4.2 - Submit valid values')->
-  click('li.sf_admin_action_save input', array('ly_media_asset' => array(
+  saveNew('lyMediaAsset', array('ly_media_asset' => array(
     'folder_id' => $subf1->getId(),
     'title' => 'test',
     'filename' => dirname(__FILE__) . '/../data/assets/asset1.png'
   )))->
 
-  with('request')->begin()->
-    isParameter('module', 'lyMediaAsset')->
-    isParameter('action', 'create')->
-  end()->
-  
-  with('form')->
-    hasErrors(false)->
-
-  with('response')->
-    isRedirected()->
-
-  followRedirect()->
-
-  with('request')->begin()->
-    isParameter('module', 'lyMediaAsset')->
-    isParameter('action', 'edit')->
-  end()->
-
-  with('response')->begin()->
-    isStatusCode(200)->
-    checkForm('lyMediaAssetForm')->
-  end()->
-
-  info('  4.3 - Check created asset')->
+  info('  4.3 - Check new asset')->
   with('doctrine')->begin()->
     check('lyMediaAsset', array(
       'filename' => 'asset1.png',
@@ -210,19 +170,81 @@ $browser->
       'folder_id' => $subf1->getId()
     ))->
   end()->
+
+  info('  4.4 - Check new asset files')
+;
+
+$asset = Doctrine::getTable('lyMediaAsset')
+  ->findOneByTitle('test');
+
+$folder = $asset->getFolderPath();
+$file = $asset->getFilename();
+
+$browser->isFile($folder, $file)->
+  info('5 - Rename asset')->
+  saveEdit('lyMediaAsset', array('ly_media_asset' => array(
+    'filename' => 'asset1_renamed.png'
+  )))->
+
+  info('  5.1 - Check renamed asset')->
+  with('doctrine')->begin()->
+    check('lyMediaAsset', array(
+      'filename' => 'asset1_renamed.png',
+      'title' => 'test',
+      'type' => 'image/png',
+      'folder_id' => $subf1->getId()
+    ))->
+  end()->
+
+  info('  5.2 - Check renamed asset files')->
+  info('    5.2.1 - Old filename must not exist')->
+  isntFile($folder, $file)->
+  info('    5.2.2 - New filename must exist')->
+  isFile($folder, 'asset1_renamed.png')->
+
+  info('6 - Move asset')->
+  saveEdit('lyMediaAsset', array('ly_media_asset' => array(
+    'folder_id' => $subf2->getId()
+  )))->
+
+  info('  6.1 - Check moved asset')->
+  with('doctrine')->begin()->
+    check('lyMediaAsset', array(
+      'filename' => 'asset1_renamed.png',
+      'title' => 'test',
+      'type' => 'image/png',
+      'folder_id' => $subf2->getId()
+    ))->
+  end()->
+
+  info('  6.2 - Check moved asset files')->
+  info('    6.2.1 - File in source folder must not exist')->
+  isntFile($folder, 'asset1_renamed.png')->
+  info('    6.2.2 - File in destination folder must exist')->
+  isFile($subf2->getRelativePath(), 'asset1_renamed.png')->
+
+  info('7 - Icons view')->
+  get('/ly_media_asset/icons')->
+  with('request')->begin()->
+    isParameter('module', 'lyMediaAsset')->
+    isParameter('action', 'icons')->
+  end()->
   
-  info('5 - Delete created asset')->
-  click('li.sf_admin_action_delete a', array(), array(
-    'method' => 'delete',
-    '_with_csrf' => true))->
+  with('response')->begin()->
+    isStatusCode(200)->
+    checkElement('#lymedia_folder_path', '/media/')->
+    checkElement('div.lymedia_up', false)->
+    checkElement('div.lymedia_folder_frame', 2)->
+    checkElement('div.lymedia_folder_frame a img[title="testsub1"]')->
+    checkElement('div.lymedia_folder_frame a img[title="testsub2"]')->
+  end()->
+
+  info('  7.1 - Navigate first subfolder')->
+  click('a[href$="ly_media_asset/icons/' . $subf1->getId() . '"]')->
 
   with('request')->begin()->
     isParameter('module', 'lyMediaAsset')->
-    isParameter('action', 'delete')->
-  end()->
-
-  with('response')->
-    isRedirected()->
-
-  followRedirect()
+    isParameter('action', 'icons')->
+    isParameter('folder_id', $subf1->getId())->
+  end()
 ;
