@@ -77,4 +77,15 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
 
     $record->setRelativePath($relative_path);
   }
+  public function retrieveAssets($params)
+  {
+    $by = $params['sort_field'] == 'date' ? 'created_at' : 'filename';
+    $dir = $params['sort_dir'] == 'desc' ? ' desc' : '';
+
+    return Doctrine_Query::create()
+      ->from('lyMediaAsset a')
+      ->where('a.folder_id = ?', $this->getId())
+      ->orderBy($by . $dir)
+      ->execute();
+  }
 }

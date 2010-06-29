@@ -29,4 +29,16 @@ class lyMediaAssetGeneratorHelper extends BaseLyMediaAssetGeneratorHelper
       return parent::linkToList($params);
     }
   }
+  public function sortIcon($sort_dir, $folder, $popup)
+  {
+    if($sort_dir != 'desc')
+    {
+      $sort_dir = 'asc';
+    }
+    return link_to(
+      image_tag("/lyMediaManagerPlugin/images/sort-$sort_dir","alt=$sort_dir"),
+      '@ly_media_asset_icons?folder_id=' . $folder->getId() . '&dir=' .($sort_dir == 'desc' ? 'asc' : 'desc') . ($popup ? '&popup=1' : ''),
+      array('title' => 'Switch sort direction')
+    );
+  }
 }

@@ -17,6 +17,7 @@
 }
 #lymedia_folder_menu
 {
+  padding: 3px;
   width: 200px;
   height: 140px;
   float:right;
@@ -33,6 +34,14 @@
 .lymedia_folder_name a
 {
   margin-left: 5px;
+}
+.lymedia_folder_sort
+{
+  font-size: 90%;
+}
+.lymedia_folder_sort img
+{
+  margin-right: 3px;
 }
 .lymedia_folder_actions ul li
 {

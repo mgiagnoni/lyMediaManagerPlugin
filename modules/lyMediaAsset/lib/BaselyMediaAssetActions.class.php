@@ -49,7 +49,23 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
         ->getRoot();
     }
     $this->folders = $this->folder->getNode()->getChildren();
-    $this->assets = $this->folder->getAssets();
+
+    if($request->hasParameter('sort'))
+    {
+      $this->getUser()->setAttribute('sort_field', $request->getParameter('sort'));
+    }
+    $this->sort_field = $this->getUser()->getAttribute('sort_field', 'name');
+
+    if($request->hasParameter('dir'))
+    {
+      $this->getUser()->setAttribute('sort_dir', $request->getParameter('dir'));
+    }
+    $this->sort_dir = $this->getUser()->getAttribute('sort_dir');
+    $this->assets = $this->folder->retrieveAssets(array(
+      'sort_field' => $this->sort_field, 
+      'sort_dir' => $this->sort_dir
+    ));
+
     $this->popup = $request->getParameter('popup', 0);
     $this->getUser()->setAttribute('popup', $this->popup ? 1:0);
 
