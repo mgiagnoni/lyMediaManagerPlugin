@@ -7,7 +7,7 @@
       </span>
       <?php foreach(lyMediaTools::getThumbnailSettings() as $type => $params): ?>
         <span class="<?php echo $type; ?>">
-          <?php echo lyMediaTools::getThumbnailURI($asset, $type); ?>
+          <?php echo lyMediaTools::getThumbnailURI($asset, $folder->getRelativePath(), $type); ?>
         </span>
       <?php endforeach; ?>
     </div>
