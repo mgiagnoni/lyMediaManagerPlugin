@@ -166,6 +166,11 @@
 {
   clear: both;
 }
+.pagination
+{
+  clear: both;
+  padding-top: 12px;
+}
 /*Patched here maybe a wrong selector in
 default.css of Doctrine admin generator */
 #sf_admin_container ul.sf_admin_td_actions li a

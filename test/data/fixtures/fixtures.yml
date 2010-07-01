@@ -25,4 +25,23 @@ lyMediaAsset:
     filename: asset3.png
     description: asset3
     type: image/png
-    
+    created_at:  '<?php echo date('Y-m-d H:i:s', strtotime('-2 day')) ?>'
+  asset4:
+    Folder: media
+    filename: zzasset.png
+    description: To test ordering by name
+    type: image/png
+    created_at: '<?php echo date('Y-m-d H:i:s',strtotime('-4 hours')) ?>'
+  asset5:
+    Folder: media
+    filename: asset5.png
+    description: To test ordering by date
+    type: image/png
+    created_at: '<?php echo date('Y-m-d H:i:s',strtotime('+ 1 day')) ?>'
+<?php for ($i = 100; $i <= 145; $i++): ?>
+  test_<?php echo $i ?>:
+    Folder: media
+    filename: 'test<?php echo $i ?>.png'
+    description: 'test description <?php echo $i ?>'
+    type: '<?php echo ($i <= 120 ? 'image/jpeg' : 'image/gif') ?>'
+<?php endfor ?>

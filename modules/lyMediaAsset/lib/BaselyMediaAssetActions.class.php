@@ -34,7 +34,17 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
    */
   public function executeIcons(sfWebRequest $request)
   {
-    $folder_id = $request->getParameter('folder_id', 0);
+    if($request->hasParameter('page'))
+    {
+      $this->getUser()->setAttribute('page', $request->getParameter('page'));
+    }
+    if($folder_id = $request->getParameter('folder_id'))
+    {
+      $this->getUser()->setAttribute('folder_id', $folder_id);
+      $this->getUser()->setAttribute('page', 1);
+    }
+    $folder_id = $this->getUser()->getAttribute('folder_id', 0);
+
     if($folder_id)
     {
       $folder = Doctrine::getTable('lyMediaFolder')
@@ -61,16 +71,19 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
       $this->getUser()->setAttribute('sort_dir', $request->getParameter('dir'));
     }
     $this->sort_dir = $this->getUser()->getAttribute('sort_dir');
-    $this->assets = $this->folder->retrieveAssets(array(
+
+    $this->pager = new sfDoctrinePager('lyMediaAsset', sfConfig::get('app_lyMediaManager_assets_per_page', 20));
+    $this->pager->setQuery($this->folder->retrieveAssetsQuery(array(
       'sort_field' => $this->sort_field, 
       'sort_dir' => $this->sort_dir
-    ));
+    )));
+    $this->pager->setPage($this->getUser()->getAttribute('page', 1));
+    $this->pager->init();
 
     $this->popup = $request->getParameter('popup', 0);
     $this->getUser()->setAttribute('popup', $this->popup ? 1:0);
 
     $this->getUser()->setAttribute('view', 'icons');
-    $this->getUser()->setAttribute('folder_id', $folder_id);
   }
 
   /**

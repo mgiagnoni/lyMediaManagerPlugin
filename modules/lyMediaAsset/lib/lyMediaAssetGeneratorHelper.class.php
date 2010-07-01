@@ -22,14 +22,14 @@ class lyMediaAssetGeneratorHelper extends BaseLyMediaAssetGeneratorHelper
     $user = sfContext::getInstance()->getUser();
     if($user->getAttribute('view') == 'icons')
     {
-      return '<li class="sf_admin_action_list">'.link_to(__('Go back'), '@ly_media_asset_icons?folder_id=' . $user->getAttribute('folder_id', 0) . ($user->getAttribute('popup', 0) ? '&popup=1' : '') ).'</li>';
+      return '<li class="sf_admin_action_list">'.link_to(__('Go back'), '@ly_media_asset_icons' . ($user->getAttribute('popup', 0) ? '?&popup=1' : '') ).'</li>';
     }
     else
     {
       return parent::linkToList($params);
     }
   }
-  public function sortIcon($sort_dir, $folder, $popup)
+  public function sortIcon($sort_dir, $popup)
   {
     if($sort_dir != 'desc')
     {
@@ -37,7 +37,7 @@ class lyMediaAssetGeneratorHelper extends BaseLyMediaAssetGeneratorHelper
     }
     return link_to(
       image_tag("/lyMediaManagerPlugin/images/sort-$sort_dir","alt=$sort_dir"),
-      '@ly_media_asset_icons?folder_id=' . $folder->getId() . '&dir=' .($sort_dir == 'desc' ? 'asc' : 'desc') . ($popup ? '&popup=1' : ''),
+      '@ly_media_asset_icons?&dir=' .($sort_dir == 'desc' ? 'asc' : 'desc') . ($popup ? '&popup=1' : ''),
       array('title' => 'Switch sort direction')
     );
   }

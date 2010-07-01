@@ -234,12 +234,111 @@ $browser->isFile($folder, $file)->
     isStatusCode(200)->
     checkElement('#lymedia_folder_path', '/media/')->
     checkElement('div.lymedia_up', false)->
-    checkElement('div.lymedia_folder_frame', 2)->
+    checkElement('div.lymedia_folder', 2)->
     checkElement('div.lymedia_folder_frame a img[title="testsub1"]')->
     checkElement('div.lymedia_folder_frame a img[title="testsub2"]')->
   end()->
 
-  info('  7.1 - Navigate first subfolder')->
+  info('8 - Sorting')->
+
+  info('  8.1 - Check default sort (name asc)')->
+
+  with('response')->begin()->
+    checkElement('.lymedia_asset .lymedia_caption', '/asset1.png/', array('position' => 0))->
+    checkElement('.lymedia_asset .lymedia_caption', '/asset2.png/', array('position' => 1))->
+    checkElement('.lymedia_asset .lymedia_caption', '/asset3.png/', array('position' => 2))->
+  end()->
+
+  info('  8.2 - Change sort direction')->
+  click('a[href$="dir=desc"]')->
+
+  with('request')->begin()->
+    isParameter('module', 'lyMediaAsset')->
+    isParameter('action', 'icons')->
+    isParameter('dir', 'desc')->
+  end()->
+
+  with('response')->begin()->
+    isStatusCode(200)->
+    checkElement('.lymedia_asset .lymedia_caption', '/zzasset.png/', array('position' => 0))->
+  end()->
+
+  info('  8.3 - Change sort field')->
+  click('a[href$="sort=date"]')->
+
+  with('request')->begin()->
+    isParameter('module', 'lyMediaAsset')->
+    isParameter('action', 'icons')->
+    isParameter('sort', 'date')->
+  end()->
+
+  with('response')->begin()->
+    isStatusCode(200)->
+    checkElement('.lymedia_asset .lymedia_caption', '/asset5.png/', array('position' => 0))->
+  end()->
+
+  info('  8.4 - Change sort direction')->
+  click('a[href$="dir=asc"]')->
+
+  with('request')->begin()->
+    isParameter('module', 'lyMediaAsset')->
+    isParameter('action', 'icons')->
+    isParameter('dir', 'asc')->
+  end()->
+
+  with('response')->begin()->
+    isStatusCode(200)->
+    checkElement('.lymedia_asset .lymedia_caption', '/asset3.png/', array('position' => 0))->
+    checkElement('.lymedia_asset .lymedia_caption', '/asset1.png/', array('position' => 1))->
+    checkElement('.lymedia_asset .lymedia_caption', '/zzasset.png/', array('position' => 2))->
+    checkElement('.lymedia_asset .lymedia_caption', '/asset2.png/', array('position' => 3))->
+  end()->
+
+  info('9 - Paging')->
+
+  with('response')->begin()->
+    checkElement('div.lymedia_asset', 20)->
+    checkElement('.pagination a.page', 2)->
+    checkElement('.pagination a.page', '!/1/')->
+    checkElement('.pagination a.page', '/2/', array('position' => 0))->
+    checkElement('.pagination a.page', '/3/', array('position' => 1))->
+  end()->
+
+  info('  9.1 - Next page')->
+  click('.pagination a.page', array(), array('position' => 1))->
+
+  with('request')->begin()->
+    isParameter('module', 'lyMediaAsset')->
+    isParameter('action', 'icons')->
+    isParameter('page', '2')->
+  end()->
+
+  with('response')->begin()->
+    isStatusCode(200)->
+    checkElement('div.lymedia_asset', 20)->
+    checkElement('.pagination a.page', '/1/',array('position' => 0))->
+    checkElement('.pagination a.page', '!/2/')->
+    checkElement('.pagination a.page', '/3/', array('position' => 1))->
+  end()->
+
+  info('  9.1.1 - Next page')->
+  click('.pagination a.page', array(), array('position' => 2))->
+
+  with('request')->begin()->
+    isParameter('module', 'lyMediaAsset')->
+    isParameter('action', 'icons')->
+    isParameter('page', '3')->
+  end()->
+
+  with('response')->begin()->
+    isStatusCode(200)->
+    checkElement('div.lymedia_asset', 11)->
+    checkElement('.pagination a.page', '/1/', array('position' => 0))->
+    checkElement('.pagination a.page', '/2/', array('position' => 1))->
+    checkElement('.pagination a.page', '!/3/')->
+  end()->
+
+  info('10 - Navigate first subfolder')->
   click('a[href$="ly_media_asset/icons/' . $subf1->getId() . '"]')->
 
   with('request')->begin()->
