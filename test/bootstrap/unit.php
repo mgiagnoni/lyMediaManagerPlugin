@@ -1,32 +1,34 @@
 <?php
+$_test_dir = realpath(dirname(__FILE__).'/..');
 
-if (!isset($_SERVER['SYMFONY']))
+// configuration
+require_once dirname(__FILE__).'/../../../../config/ProjectConfiguration.class.php';
+$configuration = ProjectConfiguration::hasActive() ? ProjectConfiguration::getActive() : new ProjectConfiguration(realpath($_test_dir.'/..'));
+
+// autoloader
+$autoload = sfSimpleAutoload::getInstance(sfConfig::get('sf_cache_dir').'/project_autoload.cache');
+$autoload->loadConfiguration(sfFinder::type('file')->name('autoload.yml')->in(array(
+  sfConfig::get('sf_symfony_lib_dir').'/config/config',
+  sfConfig::get('sf_config_dir'),
+)));
+$autoload->register();
+
+// lime
+include $configuration->getSymfonyLibDir().'/vendor/lime/lime.php';
+
+$configuration = ProjectConfiguration::getApplicationConfiguration( 'frontend', 'test', true);
+
+//Remove test dirs
+$rootdir = lyMediaTools::getBasePath() . 'test_root';
+if(is_dir($rootdir))
 {
-  throw new RuntimeException('Could not find symfony core libraries.');
+  $files = sfFinder::type('any')->maxdepth(4)->in($rootdir);
+  array_unshift($files, $rootdir);
+  $fs = new sfFileSystem();
+  $fs->remove($files);
 }
 
-require_once $_SERVER['SYMFONY'].'/autoload/sfCoreAutoload.class.php';
-sfCoreAutoload::register();
-
-$projectPath = dirname(__FILE__).'/../fixtures/project';
-/** configuration of the fixture project */
-require_once($projectPath.'/config/ProjectConfiguration.class.php');
-$configuration = new ProjectConfiguration($projectPath);
-
-function lyMediaManagerPlugin_autoload_again($class)
-{
-  $autoload = sfSimpleAutoload::getInstance();
-  $autoload->reload();
-  return $autoload->autoload($class);
-}
-spl_autoload_register('lyMediaManagerPlugin_autoload_again');
-
-if (file_exists($config = dirname(__FILE__).'/../../config/lyMediaManagerPluginConfiguration.class.php'))
-{
-  require_once $config;
-  $plugin_configuration = new lyMediaManagerPluginConfiguration($configuration, dirname(__FILE__).'/../..', 'lyMediaManagerPlugin');
-}
-else
-{
-  $plugin_configuration = new sfPluginConfigurationGeneric($configuration, dirname(__FILE__).'/../..', 'lyMediaManagerPlugin');
-}
+new sfDatabaseManager($configuration);
+Doctrine::dropDatabases();
+Doctrine::createDatabases();
+Doctrine::createTablesFromModels(sfConfig::get('sf_lib_dir').'/model');

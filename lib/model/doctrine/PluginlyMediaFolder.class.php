@@ -17,13 +17,23 @@
  */
 abstract class PluginlyMediaFolder extends BaselyMediaFolder
 {
-  protected $parent_id = null;
+  protected $parent = null;
+  protected $old_path = null;
 
-  public function changedParent($new_parent_id)
+  public function create(lyMediaFolder $parent)
   {
-    $this->parent_id = $new_parent_id;
+    if(!$this->getName())
+    {
+      throw new lyMediaException('Can\'t create a folder without name');
+    }
+    $this->setParent($parent);
+    $this->save();
   }
-
+  public function move($new_parent)
+  {
+    $this->setParent($new_parent);
+    $this->save();
+  }
   public function getIndentName()
   {
     return str_repeat('-- ', $this->level) . $this->name;
@@ -32,6 +42,13 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
   public function getPath()
   {
     return $this->getNode()->getPath(DIRECTORY_SEPARATOR, true) . DIRECTORY_SEPARATOR;
+  }
+  public function postInsert($event)
+  {
+    if($this->getParent())
+    {
+      $this->getNode()->insertAsLastChildOf($this->getParent());
+    }
   }
   public function preDelete($event)
   {
@@ -44,38 +61,20 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
     }
     lyMediaTools::deleteAssetFolder($record->getRelativePath());
   }
-  public function preSave($event)
+  public function preInsert($event)
   {
-    $record = $event->getInvoker();
-
-    if(empty($this->parent_id))
+    $this->updateRelativePath();
+    lyMediaTools::createAssetFolder($this->getRelativePath());
+  }
+  public function preUpdate($event)
+  {
+    if($this->old_path)
     {
-      $parent = $record->getNode()->getParent();
+      //Moved
+      lyMediaTools::moveAssetFolder($this->old_path, $this->getRelativePath());
+      $this->old_path = null;
+      $this->getNode()->moveAsLastChildOf($this->parent);
     }
-    else
-    {
-      $parent = $this->getTable()->find($this->parent_id);
-    }
-    
-    $relative_path = '';
-
-    if($parent)
-    {
-      $relative_path = $parent->getNode()->getPath('/', true) . '/';
-    }
-    
-    $relative_path .= $record->getName() . '/';
-    
-    if(!$record->exists())
-    {
-      lyMediaTools::createAssetFolder($relative_path);
-    }
-    else if($record->getRelativePath() != $relative_path)
-    {
-      lyMediaTools::moveAssetFolder($record->getRelativePath(), $relative_path);
-    }
-
-    $record->setRelativePath($relative_path);
   }
   public function retrieveAssets($params)
   {
@@ -90,5 +89,35 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
       ->from('lyMediaAsset a')
       ->where('a.folder_id = ?', $this->getId())
       ->orderBy($by . $dir);
+  }
+  public function setParent($folder)
+  {
+    if(!isset($this->parent) || $this->parent->getId() != $folder->getId())
+    {
+      $this->parent = $folder;
+      $this->updateRelativePath();
+    }
+  }
+  public function getParent()
+  {
+    if(isset($this->parent))
+    {
+      return $this->parent;
+    }
+    else
+    {
+      return $this->getNode()->getParent();
+    }
+  }
+  
+  protected function updateRelativePath()
+  {
+    $relative_path = ($this->getParent() ? $this->getParent()->getRelativePath() : '') . $this->getName() . '/';
+
+    if($this->getRelativePath() != $relative_path)
+    {
+      $this->old_path = $this->getRelativePath();
+      $this->setRelativePath($relative_path);
+    }
   }
 }

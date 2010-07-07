@@ -80,29 +80,14 @@ abstract class PluginlyMediaFolderForm extends BaselyMediaFolderForm
   public function updateObject($values = null)
   {
     $object = parent::updateObject($values);
-    $node = $object->getNode();
 
     if($parent_id = $this->getValue('parent_id'))
     {
       $parent = $object->getTable()
         ->find($parent_id);
-      
-      $object->changedParent($parent_id);
-    }
 
-    if($this->isNew())
-    {
-      $node->insertAsLastChildOf($parent);
+      $object->setParent($parent);
     }
-    else
-    {
-      if(!empty($parent_id) && $parent_id != $node->getParent()->getId())
-      {
-        //A new parent has been selected
-        $node->moveAsLastChildOf($parent);
-      }
-    }
-
     return $object;
   }
 }

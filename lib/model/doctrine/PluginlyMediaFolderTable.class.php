@@ -23,6 +23,7 @@ class PluginlyMediaFolderTable extends Doctrine_Table
     $folder->setName($root_name);
     $folder->save();
     $this->getTree()->createRoot($folder);
+    return $folder;
   }
   public function getRoot()
   {
