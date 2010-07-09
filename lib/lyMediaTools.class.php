@@ -212,7 +212,26 @@ class lyMediaTools
 
     return $img;
   }
-  
+
+  public static function log($message, $color = '')
+  {
+    switch ($color)
+    {
+      case 'green':
+        $message = "\033[32m".$message."\033[0m\n";
+        break;
+      case 'red':
+        $message = "\033[31m".$message."\033[0m\n";
+        break;
+      case 'yellow':
+        $message = "\033[33m".$message."\033[0m\n";
+        break;
+      default:
+        $message = $message . "\n";
+    }
+    fwrite(STDOUT, $message);
+  }
+
   public static function moveAssetFiles($old_path, $old_fname, $new_path, $new_fname, $thumbs = false)
   {
     $src = self::getBasePath() . $old_path . (isset($old_fname) ? $old_fname : $new_fname);
@@ -261,5 +280,15 @@ class lyMediaTools
         rename($src, $dest);
       }
     }
+  }
+
+  public static function splitPath($path, $separator = DIRECTORY_SEPARATOR)
+  {
+    $path = rtrim($path, $separator);
+    $dirs = preg_split('/' . preg_quote($separator, '/') . '+/', $path);
+    $name = array_pop($dirs);
+    $relativePath =  implode($separator, $dirs);
+
+    return array($relativePath, $name);
   }
 }

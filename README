@@ -28,7 +28,7 @@ Alternatively you can uncompress the .tgz package inside the `plugins` directory
 
 If you choose the manual installation another two steps are needed. Plugins must be enabled in your project configuration class. Example:
 
-    //%project_dir%/config/ProjectConfigurationClas.class.php
+    //%project_dir%/config/ProjectConfigurationClass.class.php
 
     ...
     public function setup()
@@ -68,6 +68,14 @@ lyMediaManagerPlugin provides a custom task to create the media library root dir
 
 This command should be executed by an user of the same group of the http server, if this is not possible chmod/chown the media library root directory so that is writable by the http server.
 
+### Go to default page
+
+Assuming that you are testing the plugin on localhost and you have enabled modules in your backend application, visit
+
+http://localhost/backend.php/ly_media_asset
+
+to go to the module default page.
+
 ## Configuration
 
 Some configuration parameters can be set inside the `app.yml` file of your application. Example.
@@ -99,13 +107,26 @@ Some configuration parameters can be set inside the `app.yml` file of your appli
 
 Note: `small` and `medium` size thumbnails are used by the plugin itself and should not be removed. More thumbnails of desired sizes can be created for use in your application.
 
-Finally visit http://localhost/backend.php/ly_media_asset (assuming that you are testing the plugin on localhost and you have enabled modules in backend application).
+## Synchronize task
+
+A dedicated task is available to synchronize the media library database with the contents of a directory.
+
+    php symfony media:synchronize ./web/uploads/medias --application=backend
+
+All folders and files in './web/uploads/medias' (a relative path, but you can specify an absolute path as well) that are not present in the media library will be added and a corresponding record created in the database. Thumbnails will be automatically generated for files of mime-types indicated in plugin configuration (see parameter `create_thumbnails_for`).
+
+    php symfony media:synchronize ./web/uploads/medias --removeOrphanAssets --application=backend
+
+Same as above, but in addition every file that is present in the media library without a corresponding file in './web/uploads/medias' will be removed from the media library.
+
+    php symfony media:synchronize ./web/uploads/medias --removeOrphanFolders --application=backend
+
+This time every folder in the media library without a corresponding folder in the directory will be removed. If something it's not clear, play with the task in a development environment to see the effect of these switches.
 
 ## Todo
 
 * Complete this README :)
-* Add paging / sorting to icons and list views
-* Add a task to import files from a folder
+* i18n
 * Improve user interface
 * Support other plugins for thumbnail generation (sfImageTransformPlugin)
 * Add more tests
