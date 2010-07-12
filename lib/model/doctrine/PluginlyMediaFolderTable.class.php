@@ -29,4 +29,21 @@ class PluginlyMediaFolderTable extends Doctrine_Table
   {
     return $this->getTree()->fetchRoot();
   }
+  public function retrieveCurrent($folder_id)
+  {
+    if($folder_id)
+    {
+      $folder = $this->find($folder_id);
+    }
+    else
+    {
+      //Root
+      $folder = $this->getRoot();
+      if(false === $folder)
+      {
+        throw new sfException('You must create a root folder. Use the `php symfony media:create-root` command for that.');
+      }
+    }
+    return $folder;
+  }
 }

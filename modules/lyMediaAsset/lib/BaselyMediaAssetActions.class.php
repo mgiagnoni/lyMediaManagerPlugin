@@ -44,20 +44,10 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
       $this->getUser()->setAttribute('page', 1);
     }
     $folder_id = $this->getUser()->getAttribute('folder_id', 0);
+    $this->folder = Doctrine::getTable('lyMediaFolder')
+      ->retrieveCurrent($folder_id);
 
-    if($folder_id)
-    {
-      $folder = Doctrine::getTable('lyMediaFolder')
-        ->find($folder_id);
-      $this->forward404Unless($folder);
-      $this->folder = $folder;
-    }
-    else
-    {
-      //Root
-      $this->folder = Doctrine::getTable('lyMediaFolder')
-        ->getRoot();
-    }
+    $this->forward404Unless($this->folder);
     $this->folders = $this->folder->getNode()->getChildren();
 
     if($request->hasParameter('sort'))
