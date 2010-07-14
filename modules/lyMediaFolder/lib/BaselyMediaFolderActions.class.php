@@ -17,6 +17,40 @@
  */
 abstract class BaselyMediaFolderActions extends autoLyMediaFolderActions
 {
+  public function executeAdd(sfWebRequest $request)
+  {
+    $parent = Doctrine::getTable('lyMediaFolder')
+      ->retrieveCurrent($this->getUser()->getAttribute('folder_id', 0));
+
+    $form = new lyMediaCreateFolderForm(null, array(
+      'parent' => $parent)
+    );
+    $form->bind($request->getParameter($form->getName()));
+
+    if($form->isValid())
+    {
+      $form->save();
+      $this->getUser()->setFlash('notice', 'Folder successfully created.');
+      
+    }
+    else
+    {
+      
+      if($form['name']->hasError())
+      {
+        $msg = 'Error on folder name: ';
+        $msg .= $form['name']->getError()->getMessage();
+      }
+      elseif($form->hasGlobalErrors())
+      {
+        $errors = $form->getGlobalErrors();
+        //echo $errors[0]->getMessage();exit;
+        $msg = $errors[0]->getMessage();
+      }
+      $this->getUser()->setFlash('error', $msg);
+    }
+    $this->redirect('@ly_media_asset_icons');
+  }
   /**
    * Deletes a folder.
    *

@@ -20,7 +20,7 @@
   margin-top: 5px;
   padding: 3px;
   width: 200px;
-  height: 140px;
+  height: 200px;
   float:right;
   border: 1px solid #d0d0d0;
 }
@@ -43,6 +43,21 @@
 .lymedia_folder_sort img
 {
   margin-right: 3px;
+}
+.lymedia_folder_actions
+{
+  margin-top: 15px;
+}
+.lymedia_folder_actions img
+{
+  vertical-align: middle;
+}
+#sf_admin_container .lymedia_folder_actions label
+{
+  float: none;
+  margin: 5px 0 0 20px;
+  display: block;
+  color: #000;
 }
 .lymedia_folder_actions ul li
 {

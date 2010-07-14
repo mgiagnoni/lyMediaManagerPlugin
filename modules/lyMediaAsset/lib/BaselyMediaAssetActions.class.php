@@ -74,6 +74,8 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
     $this->getUser()->setAttribute('popup', $this->popup ? 1:0);
 
     $this->getUser()->setAttribute('view', 'icons');
+
+    $this->folder_form = new lyMediaCreateFolderForm();
   }
 
   /**
