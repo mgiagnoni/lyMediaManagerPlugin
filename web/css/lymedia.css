@@ -17,10 +17,10 @@
 }
 #lymedia_folder_menu
 {
-  margin-top: 5px;
+  margin: 5px 0 25px 0;
   padding: 3px;
-  width: 200px;
-  height: 200px;
+  width: 280px;
+  height: 270px;
   float:right;
   border: 1px solid #d0d0d0;
 }
@@ -46,7 +46,14 @@
 }
 .lymedia_folder_actions
 {
+  font-size: 90%;
   margin-top: 15px;
+}
+.lymedia_folder_actions form
+{
+  background-color: #f5f5f5;
+  margin-top: 4px;
+  padding: 3px 5px;
 }
 .lymedia_folder_actions img
 {
@@ -55,9 +62,13 @@
 #sf_admin_container .lymedia_folder_actions label
 {
   float: none;
-  margin: 5px 0 0 20px;
+  margin-left: 20px;
   display: block;
   color: #000;
+}
+.lymedia_folder_actions input.upload
+{
+  margin: 3px 0 0 20px;
 }
 .lymedia_folder_actions ul li
 {

@@ -17,9 +17,7 @@
     <?php endif; ?>
   </div>
   <div class="lymedia_folder_actions">
-    <?php include_partial('lyMediaAsset/folder_form', array('folder' => $folder, 'form' => $folder_form));?>
-    <ul>
-      <li><?php echo link_to(__('Upload file'), '@ly_media_asset_new'); ?></li>
-    </ul>
+    <?php include_partial('lyMediaAsset/folder_form', array('form' => $folder_form));?>
+    <?php include_partial('lyMediaAsset/upload_form', array('form' => $upload_form));?>
   </div>
 </div>

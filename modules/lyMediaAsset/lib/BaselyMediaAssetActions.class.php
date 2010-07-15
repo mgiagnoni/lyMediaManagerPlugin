@@ -76,6 +76,7 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
     $this->getUser()->setAttribute('view', 'icons');
 
     $this->folder_form = new lyMediaCreateFolderForm();
+    $this->upload_form = new lyMediaUploadForm(null, array('folder' => $this->folder));
   }
 
   /**
@@ -102,5 +103,44 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
     {
       $this->redirect('@ly_media_asset');
     }
+  }
+  
+  /**
+   * Uploads an asset
+   * 
+   * @param sfWebRequest $request 
+   */
+  public function executeUpload(sfWebRequest $request)
+  {
+    $folder = Doctrine::getTable('lyMediaFolder')
+      ->retrieveCurrent($this->getUser()->getAttribute('folder_id', 0));
+
+    $form = new lyMediaUploadForm(null, array(
+      'folder' => $folder)
+    );
+
+    $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
+
+    if($form->isValid())
+    {
+      $form->save();
+      $this->getUser()->setFlash('notice', 'File successfully uploaded.');
+
+    }
+    else
+    {
+      if($form['filename']->hasError())
+      {
+        $msg = 'Error on file name: ';
+        $msg .= $form['filename']->getError()->getMessage();
+      }
+      elseif($form->hasGlobalErrors())
+      {
+        $errors = $form->getGlobalErrors();
+        $msg = $errors[0]->getMessage();
+      }
+      $this->getUser()->setFlash('error', $msg);
+    }
+    $this->redirect('@ly_media_asset_icons');
   }
 }

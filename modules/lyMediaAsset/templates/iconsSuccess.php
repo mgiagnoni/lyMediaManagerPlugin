@@ -14,7 +14,7 @@ if($popup)
 
   <div id="sf_admin_content">
     <div id="lymedia_icons">
-      <?php include_partial('lyMediaAsset/folder_menu', array('folder' => $folder, 'sort_field' => $sort_field, 'sort_dir' => $sort_dir, 'popup' => $popup, 'helper' => $helper, 'folder_form' => $folder_form)); ?>
+      <?php include_partial('lyMediaAsset/folder_menu', array('folder' => $folder, 'sort_field' => $sort_field, 'sort_dir' => $sort_dir, 'popup' => $popup, 'helper' => $helper, 'folder_form' => $folder_form, 'upload_form' => $upload_form)); ?>
       <?php if($popup) { echo __('Click an image to select it.'); } ?>
       <?php include_partial('lyMediaAsset/folder_icon_up', array('folder' => $folder, 'popup' => $popup)); ?>
       <?php if($folders): ?>
