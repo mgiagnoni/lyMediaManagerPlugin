@@ -237,6 +237,8 @@ $browser->isFile($folder, $file)->
     checkElement('div.lymedia_folder', 2)->
     checkElement('div.lymedia_folder_frame a img[title="testsub1"]')->
     checkElement('div.lymedia_folder_frame a img[title="testsub2"]')->
+    checkElement('div.lymedia_folder_stats span.folders', '/2 folders/')->
+    checkElement('div.lymedia_folder_stats span.files', '/51 files/')->
   end()->
 
   info('8 - Sorting')->

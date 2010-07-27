@@ -30,14 +30,17 @@
 }
 .lymedia_folder_name img
 {
-  vertical-align: middle;
+  float: left;
+  margin-right: 10px;
+  padding-bottom: 5px;
 }
-.lymedia_folder_name a
+.lymedia_folder_stats
 {
-  margin-left: 5px;
+  font-size: 90%;
 }
 .lymedia_folder_sort
 {
+  clear: both;
   font-size: 90%;
 }
 .lymedia_folder_sort img

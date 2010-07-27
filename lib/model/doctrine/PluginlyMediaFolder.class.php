@@ -229,7 +229,15 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
 
     return $foldernames;
   }
-  
+  public function sumFileSizes()
+  {
+    return Doctrine_Query::create()
+      ->select('SUM(a.filesize) size')
+      ->from('lyMediaAsset a')
+      ->where('a.folder_id = ?', $this->getId())
+      ->fetchOne()
+      ->getSize();
+  }
   protected function updateRelativePath()
   {
     $relative_path = ($this->getParent() ? $this->getParent()->getRelativePath() : '') . $this->getName() . '/';

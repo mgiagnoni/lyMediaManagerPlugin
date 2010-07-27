@@ -2,6 +2,21 @@
   <div class="lymedia_folder_name">
     <?php echo image_tag('/lyMediaManagerPlugin/images/folder-open', 'alt=folder title=' . $folder->getName()); ?>
     <?php echo link_to($folder->getName(), 'ly_media_folder_edit', $folder); ?>
+    <div class="lymedia_folder_stats">
+      <?php if($nbfiles > 0): ?>
+        <span class="files">
+          <?php echo format_number_choice('[1]1 file|(1,+Inf]%1% files', array('%1%' => $nbfiles), $nbfiles) ?>
+        </span>
+        <span class="size">
+          <?php echo ' ('. $total_size . ' kB) '; ?>
+        </span>
+      <?php endif; ?>
+      <?php if($nbfolders > 0): ?>
+        <span class="folders">
+          <?php echo format_number_choice('[1]1 folder|(1,+Inf]%1% folders', array('%1%' => $nbfolders), $nbfolders) ?>
+        </span>
+      <?php endif; ?>
+    </div>
   </div>
   <div class="lymedia_folder_sort">
     <?php echo __('Sort by:'); ?>&nbsp;

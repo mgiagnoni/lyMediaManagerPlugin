@@ -77,6 +77,8 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
 
     $this->folder_form = new lyMediaCreateFolderForm();
     $this->upload_form = new lyMediaUploadForm(null, array('folder' => $this->folder));
+    $this->nbfolders = $this->folders ? count($this->folders) : 0;
+    $this->total_size = $this->folder->sumFileSizes();
   }
 
   /**
