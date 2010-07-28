@@ -61,8 +61,8 @@ abstract class PluginlyMediaAssetForm extends BaselyMediaAssetForm
         'required' => true,
         'allowed_extensions' => lyMediaTools::getAllowedExtensions()
       ));
+      $this->validatorSchema->setPostValidator(new lyMediaValidatorAsset());
     }
-    $this->validatorSchema->setPostValidator(new lyMediaValidatorAsset());
   }
 
   protected function doBind(array $values)

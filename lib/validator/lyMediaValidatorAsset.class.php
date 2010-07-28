@@ -20,6 +20,7 @@ class lyMediaValidatorAsset extends sfValidatorBase
   public function configure($options = array(), $messages = array())
   {
     $this->setMessage('invalid', 'Can\'t save file.');
+    $this->addMessage('file_exists', 'Can\'t save "%name%". A file with the same name exists in "%folder%"');
   }
   protected function doClean($values)
   {
@@ -31,26 +32,14 @@ class lyMediaValidatorAsset extends sfValidatorBase
       throw new sfValidatorError($this, 'invalid');
     }
 
-    if($values['filename'] instanceof sfvalidatedFile)
-    {
-      //Asset is being uploaded
-      $fname = $values['filename']->getOriginalName();
-    }
-    else
-    {
-      //Asset is being edited
-      $fname = $values['filename'];
-    }
-
     $my_id = empty($values['id']) ? 0 : $values['id'];
     $assets = $folder->getAssets();
     
     foreach($assets as $a)
     {
-      if($fname == $a->getFilename() && $a->getId() != $my_id)
+      if($values['filename'] == $a->getFilename() && $a->getId() != $my_id)
       {
-        //TODO: better error message needed
-        throw new sfValidatorError($this, 'invalid');
+        throw new sfValidatorError($this, 'file_exists', array('name' => $values['filename'], 'folder' => $folder->getName()));
       }
     }
     return $values;

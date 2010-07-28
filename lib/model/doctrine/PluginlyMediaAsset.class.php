@@ -19,7 +19,18 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
 {
   public function generateFilenameFilename(sfValidatedFile $file)
   {
-    return $file->getOriginalName();
+    $ofile = pathinfo($file->getOriginalName(), PATHINFO_FILENAME);
+    $filename = $ofile . $file->getOriginalExtension();
+
+    for($i = 1; $i <= 999; $i++)
+    {
+      if(!file_exists($file->getPath() . DIRECTORY_SEPARATOR . $filename))
+      {
+        break;
+      }
+      $filename = $ofile . '(' . $i . ')' . $file->getOriginalExtension();
+    }
+    return $filename;
   }
 
   public function getPath()

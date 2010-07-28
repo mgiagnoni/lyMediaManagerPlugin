@@ -40,8 +40,6 @@ class BaselyMediaUploadForm extends BaselyMediaAssetForm
       'allowed_extensions' => lyMediaTools::getAllowedExtensions()
     ));
     $this->widgetSchema['filename']->setLabel('Upload file');
-
-    $this->validatorSchema->setPostValidator(new lyMediaValidatorAsset());
   }
 
   public function processValues($values)
