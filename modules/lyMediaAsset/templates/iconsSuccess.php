@@ -1,13 +1,5 @@
 <?php use_helper('I18N') ?>
 <?php include_partial('lyMediaAsset/assets') ?>
-<?php
-if($popup)
-{
-  use_javascript('/js/tiny_mce/tiny_mce_popup.js', 'last');
-  use_javascript('/lyMediaManagerPlugin/js/lymedia_tiny_popup.js', 'last');
-  use_stylesheet('/lyMediaManagerPlugin/css/lymedia_popup.css', 'last');
-}
-?>
 <div id="sf_admin_container">
   <?php include_partial('lyMediaAsset/flashes') ?>
   <?php include_partial('lyMediaAsset/folder_path', array('folder' => $folder, 'popup' => $popup)); ?>
@@ -26,7 +18,7 @@ if($popup)
           'nbfolders' => $nbfolders,
           'total_size' => $total_size
         )); ?>
-      <?php if($popup) { echo __('Click an image to select it.'); } ?>
+      <div class="popup_help"><?php if($popup) { echo __('Click an image to select it.'); } ?></div>
       <?php include_partial('lyMediaAsset/folder_icon_up', array('folder' => $folder, 'popup' => $popup)); ?>
       <?php if($folders): ?>
         <?php foreach($folders as $f): ?>
