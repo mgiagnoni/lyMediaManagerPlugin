@@ -36,3 +36,7 @@ function thumbnail_image_tag($asset, $folder_path = null, $type ='small', $optio
 {
   return image_tag(lyMediaTools::getThumbnailURI($asset, $folder_path, $type), $options);
 }
+function thumbnail_image_path($asset, $folder_path = null, $type ='small')
+{
+  return image_path(lyMediaTools::getThumbnailURI($asset, $folder_path, $type));
+}

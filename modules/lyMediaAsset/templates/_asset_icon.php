@@ -3,11 +3,11 @@
     <?php if($popup): ?>
     <div class="lymedia_popup_info">
       <span>
-        <?php echo lyMediaTools::getAssetURI($asset); ?>
+        <?php echo image_path(lyMediaTools::getAssetURI($asset)); ?>
       </span>
       <?php foreach(lyMediaTools::getThumbnailSettings() as $type => $params): ?>
         <span class="<?php echo $type; ?>">
-          <?php echo lyMediaTools::getThumbnailURI($asset, $folder->getRelativePath(), $type); ?>
+          <?php echo thumbnail_image_path($asset, $folder->getRelativePath(), $type); ?>
         </span>
       <?php endforeach; ?>
     </div>
