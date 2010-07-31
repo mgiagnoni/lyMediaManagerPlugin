@@ -23,6 +23,8 @@ class sfWidgetFormLyMediaTinyMCE extends sfWidgetFormTextarea
     $this->addOption('width');
     $this->addOption('height');
     $this->addOption('config', '');
+    $this->addOption('tiny_mce_js', 'tiny_mce/tiny_mce');
+    $this->addOption('file_browser_js', '/lyMediaManagerPlugin/js/lymedia_tiny');
   }
 
   public function render($name, $value = null, $attributes = array(), $errors = array())
@@ -31,6 +33,7 @@ class sfWidgetFormLyMediaTinyMCE extends sfWidgetFormTextarea
 
     $js = sprintf(<<<EOF
 <script type="text/javascript">
+  /* <![CDATA[ */
   lyMediaManager.init('%s');
   
   tinyMCE.init({
@@ -47,17 +50,32 @@ class sfWidgetFormLyMediaTinyMCE extends sfWidgetFormTextarea
     file_browser_callback : "lyMediaManager.fileBrowserCallBack"
     %s
   });
+  /* ]]> */
 </script>
 EOF
     ,
-      url_for('@ly_media_asset_icons?popup=1'),
+      url_for('@ly_media_asset_icons?popup=1',true),
       $this->generateId($name),
       $this->getOption('theme'),
-      $this->getOption('width')  ? sprintf('width:                             "%spx",', $this->getOption('width')) : '',
-      $this->getOption('height') ? sprintf('height:                            "%spx",', $this->getOption('height')) : '',
+      $this->getOption('width')  ? sprintf('width: "%spx",', $this->getOption('width')) : '',
+      $this->getOption('height') ? sprintf('height: "%spx",', $this->getOption('height')) : '',
       $this->getOption('config') ? ",\n".$this->getOption('config') : ''
     );
 
     return $textarea.$js;
+  }
+  public function getJavascripts()
+  {
+    $js = array();
+    
+    if(false !== $this->getOption('tiny_mce_js'))
+    {
+      $js[] = $this->getOption('tiny_mce_js');
+    }
+    if(false !== $this->getOption('file_browser_js'))
+    {
+      $js[] = $this->getOption('file_browser_js');
+    }
+    return $js;
   }
 }
