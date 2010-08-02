@@ -150,6 +150,6 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
       }
       $this->getUser()->setFlash('error', $msg);
     }
-    $this->redirect('@ly_media_asset_icons');
+    $this->redirect('@ly_media_asset_icons?folder_id=' . $this->getUser()->getAttribute('folder_id', 0) . ($this->getUser()->getAttribute('popup', 0) ? '&popup=1' : ''));
   }
 }
