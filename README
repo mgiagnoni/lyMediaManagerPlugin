@@ -123,6 +123,76 @@ Same as above, but in addition every file that is present in the media library w
 
 This time every folder in the media library without a corresponding folder in the directory will be removed. If something it's not clear, play with the task in a development environment to see the effect of these switches.
 
+## Working with TinyMCE editor
+
+lyMediaManagerPlugin can work together the TinyMCE editor to make file browsing and file uploading features accessible directly from the editor toolbar. A few configuration steps are needed.
+
+### Installing TinyMCE
+
+Download the package from the [TinyMCE site](http://tinymce.moxiecode.com/download.php): it will be something like `tinymce_3_3_x.zip`, where `x` is the minor version number. Uncompress it in a temporary folder on your hard disk: the resulting folder tree should be like the following
+
+    tinymce
+      --jscripts
+        --tiny_mce <--Only this folder (with all subfolders and files inside) is needed.
+          ...
+      --examples
+      ...
+
+Copy the `tiny_mce` folder (with all its subfolders and files) in '%project_dir%/web/js'. Verify that the following javascript files are present exactly in these paths:
+
+    %project_dir%/web/js/tiny_mce/tiny_mce.js
+    %project_dir%/web/js/tiny_mce/tiny_mce_popup.js
+
+### Configuring your form
+
+To use TinyMCE with the file browser provided by lyMediaManagerPlugin you need to configure your forms following one of these **alternative** methods.
+
+1) Dedicated widget
+
+In the configure() method of your form replace `sfWidgetFormTextarea` with `sfWidgetFormLyMediaTinyMCE`. For example, assuming that the field you want to make editable with TinyMCE editor is named `content`
+
+    class MyForm extends BaseMyForm
+    {
+      public function configure()
+      {     
+        ...  
+        $this->widgetSchema['content'] = new sfWidgetFormLyMediaTinyMCE(array(
+         'width' => 450,
+         'height' => 300		
+        ));
+        ...
+      }
+    }
+
+Refer to the source of `sfWidgetFormLyMediaTinyMCE` for other options supported by the widget. If you have installed TinyMCE exactly as explained above, you won't need to change options default values.
+
+2) Manual inclusion of Javascript files
+
+If you prefer to not use the widget you can include all the needed Javascript files in your form template through standard helpers.
+
+    <?php use_stylesheets_for_form($form) ?>
+    <?php use_javascripts_for_form($form) ?>
+    <?php use_javascript('tiny_mce/tiny_mce', 'last'); ?>
+    <?php use_javascript('/lyMediaManagerPlugin/js/lymedia_tiny', 'last'); ?>
+    <?php use_javascript('/lyMediaManagerPlugin/js/lymedia_tiny_cfg', 'last'); ?>
+    ...
+
+Then in the configure() method of your form set a class attribute for all textareas you want to make editable with TinyMCE.
+
+    class MyForm extends BaseMyForm
+    {
+      public function configure()
+      {     
+        ...  
+        $this->widgetSchema['content']->setAttribute('class', 'rich');
+        ...
+      }
+    }
+
+Also refer to comments inside lymedia_tiny_cfg.js file because you may need to edit something depending by the name and location of your front controller.
+
+Using `sfWidgetFormLyMediaTinyMCE` is easier, while manual inclusion of Javascript files is preferable if you want to keep TinyMCE configuration in a separate javascript file e do not want to mix markup and Javascript code in document body. Whichever method you choose, if you have configured everything properly you will see `lyMediaManagerPlugin` file browser when you select the `insert/edit image` button in TinyMCE toolbar and click the `browse` icon in the pop-up window.
+
 ## Todo
 
 * Complete this README :)
