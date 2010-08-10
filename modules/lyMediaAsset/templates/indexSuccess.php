@@ -11,10 +11,11 @@
     <?php include_partial('lyMediaAsset/list_header', array('pager' => $pager)) ?>
   </div>
   <?php include_partial('lyMediaAsset/folder_path', array('folder' => null, 'popup' => 0)); ?>
-
-  <div id="sf_admin_bar">
-    <?php include_partial('lyMediaAsset/filters', array('form' => $filters, 'configuration' => $configuration)) ?>
-  </div>
+  <?php if ($configuration->hasFilterForm()): ?>
+    <div id="sf_admin_bar">
+      <?php include_partial('lyMediaAsset/filters', array('form' => $filters, 'configuration' => $configuration)) ?>
+    </div>
+  <?php endif; ?>
 
   <div id="sf_admin_content">
     <form action="<?php echo url_for('ly_media_asset_collection', array('action' => 'batch')) ?>" method="post">
