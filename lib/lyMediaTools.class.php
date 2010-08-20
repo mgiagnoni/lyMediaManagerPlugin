@@ -156,22 +156,36 @@ class lyMediaTools
 
   public static function getThumbnailFile($asset, $type = 'small')
   {
+    $thumbnail = 'unknown.png';
+
     if($asset->supportsThumbnails())
     {
       $thumbnail = $type . '_' . $asset->getFilename();
     }
     else
     {
-      switch($asset->getType())
+      list($mtype, $mstype) = explode('/', $asset->getType());
+
+      switch($mtype)
       {
-        case 'text/plain':
-          $thumbnail = 'txt.png';
+        case 'image':
+          $thumbnail = 'image-x-generic.png';
           break;
-        default:
-          $thumbnail = 'unknown.png';
+        case 'application':
+          switch($mstype)
+          {
+            case 'pdf':
+            case 'x-pdf':
+              $thumbnail = 'application-pdf.png';
+              break;
+          }
           break;
+        case 'text':
+          $thumbnail = 'text-x-generic.png';
+          break;
+        }
       }
-    }
+      
     return $thumbnail;
   }
 
