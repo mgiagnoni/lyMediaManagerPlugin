@@ -17,64 +17,105 @@
  */
 abstract class PluginlyMediaAsset extends BaselyMediaAsset
 {
+  /**
+   * Generates a file name for uploaded asset.
+   *
+   * @param sfValidatedFile $file
+   * @return string unique file name.
+   */
   public function generateFilenameFilename(sfValidatedFile $file)
   {
-    $ofile = pathinfo($file->getOriginalName(), PATHINFO_FILENAME);
-    $filename = $ofile . $file->getOriginalExtension();
-
-    for($i = 1; $i <= 999; $i++)
-    {
-      if(!file_exists($file->getPath() . DIRECTORY_SEPARATOR . $filename))
-      {
-        break;
-      }
-      $filename = $ofile . '(' . $i . ')' . $file->getOriginalExtension();
-    }
-    return $filename;
+    $fs = new lyMediaFileSystem();
+    return $fs->generateUniqueFilename($file->getPath(), $file->getOriginalName());
   }
 
+  /**
+   * Returns asset file path.
+   *
+   * @return string, path (relative to web dir).
+   */
   public function getPath()
   {
     return $this->getFolderPath() . $this->getFilename();
   }
 
+  /**
+   * Returns asset folder path.
+   *
+   * @return string, folder path (relative to web dir).
+   */
   public function getFolderPath()
   {
     return $this->getFolder()->getRelativePath();
   }
-  
+
+  /**
+   * postDelete.
+   *
+   * @param Doctrine_Event $event
+   */
   public function postDelete($event)
   {
     $record = $event->getInvoker();
-
-    lyMediaTools::deleteAssetFiles($record->getFolderPath(), $record->getFilename(), $record->supportsThumbnails());
+    $fs = new lymediaFileSystem();
+    $fs->unlink($record->getPath(), $record->supportsThumbnails());
   }
 
+  /**
+   * preSave.
+   *
+   * @param Doctrine_Event $event
+   */
   public function preSave($event)
   {
     $record = $event->getInvoker();
-    $modified = $record->getModified(true);
 
-    if($record->isNew() && $record->supportsThumbnails())
+    if($record->isNew())
     {
-      lyMediaTools::generateThumbnails($record->getFolderPath(), $record->getFilename());
+      $file = $record->getFilename();
+      if($file != basename($file) && is_file($file))
+      {
+        $fs = new lyMediaFileSystem();
+        $dest_path = $record->getFolderPath();
+        $dest_file = $fs->generateUniqueFileName($dest_path, basename($file));
+        $fs->import($file, $dest_path . $dest_file);
+        $record->setType(mime_content_type($file));
+        $record->setFilename($dest_file);
+      }
+      if($record->supportsThumbnails())
+      {
+        lyMediaTools::generateThumbnails($record->getFolderPath(), $record->getFilename());
+      }
     }
     else
     {
+      $modified = $record->getModified(true);
       if(isset($modified['folder_id']) || isset($modified['filename']))
       {
         //Selected new folder or edited filename: move/rename asset
-
-        //Relation still not saved: we need find method to get modified folder
-        $new_folder = Doctrine::getTable('lyMediaFolder')
+        $dest_folder = Doctrine::getTable('lyMediaFolder')
           ->find($record->getFolderId());
 
-        $old_fname = (isset($modified['filename'])) ? $modified['filename'] : null;
-        lyMediaTools::moveAssetFiles($record->getFolder()->getRelativePath(), $old_fname, $new_folder->getRelativePath(), $record->getFileName(), $record->supportsThumbnails());
+        $src_folder = $dest_folder;
+        if(isset($modified['folder_id']))
+        {
+          $src_folder = Doctrine::getTable('lyMediaFolder')
+          ->find($modified['folder_id']);
+        }
+
+        $src = $src_folder->getRelativePath() . (isset($modified['filename']) ? $modified['filename'] : $record->getFileName());
+        $dest = $dest_folder->getRelativePath() . $record->getFileName();
+        $fs = new lyMediaFileSystem();
+        $fs->rename($src, $dest, $record->supportsThumbnails());
       }
     }
   }
 
+  /**
+   * Checks if asset supports thumbnails.
+   *
+   * @return bool, true if thumbnails are supported.
+   */
   public function supportsThumbnails()
   {
     return in_array($this->getType(),

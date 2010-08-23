@@ -22,33 +22,9 @@ class lyMediaTools
 
   public static function createAssetFolder($folder_path)
   {
-    self::createFolder(self::getBasePath() . $folder_path);
+    $fs = new lyMediaFileSystem();
+    $fs->mkdir($folder_path);
   }
-  public static function createFolder($folder_path)
-  {
-    //TODO: more error checking needed
-    if(!file_exists($folder_path))
-    {
-      $old = umask(0);
-      mkdir($folder_path, octdec(sfConfig::get('app_lyMediaManager_chmod_folder', '0770')));
-      umask($old);
-    }
-  }
-  public static function deleteAssetFiles($path, $filename, $thumbs = false)
-  {
-    $file = self::getBasePath() . $path . $filename;
-
-    if(file_exists($file))
-    {
-      unlink($file);
-    }
-
-    if($thumbs)
-    {
-      self::deleteThumbnails($path, $filename);
-    }
-  }
-  
   public static function deleteAssetFolder($folder_path)
   {
     
@@ -58,21 +34,6 @@ class lyMediaTools
     $fs = new sfFilesystem();
     $fs->remove(array_filter($paths, 'file_exists'));
   }
-
-  public static function deleteThumbnails($path, $filename)
-  {
-    $path = self::getBasePath() . $path . self::getThumbnailFolder() . DIRECTORY_SEPARATOR;
-
-    foreach(self::getThumbnailSettings() as $key => $params)
-    {
-      $file = $path . $key . '_' . $filename;
-      if(file_exists($file))
-      {
-        unlink($file);
-      }
-    }
-  }
-
   public static function formatAssetCaption($asset)
   {
     return(nl2br(wordwrap($asset->getFilename(),sfConfig::get('app_lyMediaManager_caption_row_max_chars',20), "\n", true)));
@@ -196,11 +157,12 @@ class lyMediaTools
 
   public static function getThumbnailPath($path, $filename, $thumbnailType, $create = true)
   {
-    $folder = self::getBasePath() . $path . self::getThumbnailFolder();
+    $fs = new lyMediaFileSystem();
+    $folder = $fs->makePathAbsolute($path) . self::getThumbnailFolder();
     
     if($create && !file_exists($folder))
     {
-      self::createFolder($folder);
+      $fs->mkdir($folder);
     }
     return $folder . DIRECTORY_SEPARATOR . $thumbnailType . '_' . $filename;
   }
@@ -245,23 +207,6 @@ class lyMediaTools
     }
     fwrite(STDOUT, $message);
   }
-
-  public static function moveAssetFiles($old_path, $old_fname, $new_path, $new_fname, $thumbs = false)
-  {
-    $src = self::getBasePath() . $old_path . (isset($old_fname) ? $old_fname : $new_fname);
-    $dest = self::getBasePath() . $new_path . $new_fname;
-
-    if(!file_exists($dest))
-    {
-      rename($src, $dest);
-      
-      if($thumbs)
-      {
-        self::moveThumbnails($old_path, $old_fname, $new_path, $new_fname);
-      }
-    }
-  }
-
   public static function moveAssetFolder($old_path, $new_path)
   {
     $old = self::getBasePath() . $old_path;
@@ -272,30 +217,6 @@ class lyMediaTools
       rename($old, $new);
     }
   }
-  
-  public static function moveThumbnails($old_path, $old_fname, $new_path, $new_fname)
-  {
-    $src_path = self::getBasePath() . $old_path . self::getThumbnailFolder() . DIRECTORY_SEPARATOR;
-    $dest_path = self::getBasePath() . $new_path . self::getThumbnailFolder() . DIRECTORY_SEPARATOR;
-    $src_file = isset($old_fname) ? $old_fname : $new_fname;
-    
-    if(!file_exists($dest_path))
-    {
-      //Create thumbnail folder
-       self::createFolder($dest_path);
-    }
-    foreach(self::getThumbnailSettings() as $key => $params)
-    {
-      $src = $src_path . $key . '_' . $src_file;
-      $dest = $dest_path . $key . '_' . $new_fname;
-      
-      if(file_exists($src) && !file_exists($dest))
-      {
-        rename($src, $dest);
-      }
-    }
-  }
-
   public static function splitPath($path, $separator = DIRECTORY_SEPARATOR)
   {
     $path = rtrim($path, $separator);
