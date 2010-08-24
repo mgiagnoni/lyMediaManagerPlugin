@@ -20,6 +20,11 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
   protected $parent = null;
   protected $old_path = null;
 
+  /**
+   * Creates a new folder.
+   *
+   * @param lyMediaFolder $parent, parent folder.
+   */
   public function create(lyMediaFolder $parent)
   {
     if(!$this->getName())
@@ -29,20 +34,43 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
     $this->setParent($parent);
     $this->save();
   }
-  public function move($new_parent)
+
+  /**
+   * Moves a folder under a new parent.
+   *
+   * @param lyMediaFolder $new_parent, new parent folder.
+   */
+  public function move(lyMediaFolder $new_parent)
   {
     $this->setParent($new_parent);
     $this->save();
   }
+
+  /**
+   * Returns folder name with indentation characters.
+   *
+   * @return string.
+   */
   public function getIndentName()
   {
     return str_repeat('-- ', $this->level) . $this->name;
   }
 
+  /**
+   * Returns folder path.
+   *
+   * @return string.
+   */
   public function getPath()
   {
     return $this->getNode()->getPath(DIRECTORY_SEPARATOR, true) . DIRECTORY_SEPARATOR;
   }
+
+  /**
+   * postInsert.
+   *
+   * @param Doctrine_Event $event.
+   */
   public function postInsert($event)
   {
     if($this->getParent())
@@ -50,6 +78,12 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
       $this->getNode()->insertAsLastChildOf($this->getParent());
     }
   }
+
+  /**
+   * preDelete.
+   *
+   * @param Doctrine_Event $event.
+   */
   public function preDelete($event)
   {
     $record = $event->getInvoker();
@@ -59,27 +93,56 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
     {
       $a->delete();
     }
-    lyMediaTools::deleteAssetFolder($record->getRelativePath());
+    $fs = new lyMediaFileSystem();
+    $fs->rmdir($record->getRelativePath());
   }
+
+  /**
+   * preInsert.
+   *
+   * @param Doctrine_Event $event.
+   */
   public function preInsert($event)
   {
     $this->updateRelativePath();
-    lyMediaTools::createAssetFolder($this->getRelativePath());
+    $fs = new lyMediaFileSystem();
+    $fs->mkdir($this->getRelativePath());
   }
+
+  /**
+   * preUpdate.
+   *
+   * @param Doctrine_Event $event.
+   */
   public function preUpdate($event)
   {
     if($this->old_path)
     {
       //Moved
-      lyMediaTools::moveAssetFolder($this->old_path, $this->getRelativePath());
+      $fs = new lyMediaFileSystem();
+      $fs->rename($this->old_path, $this->getRelativePath());
       $this->old_path = null;
       $this->getNode()->moveAsLastChildOf($this->parent);
     }
   }
+
+  /**
+   * Retrieves folder assets.
+   *
+   * @param array $params, sort parameters.
+   * @return Doctrine_Collection.
+   */
   public function retrieveAssets($params)
   {
     return $this->retrieveAssetsQuery($params)->execute();
   }
+
+  /**
+   * Generates query to retrieve folder assets.
+   *
+   * @param array $params, sort parameters.
+   * @return Doctrine_Query.
+   */
   public function retrieveAssetsQuery($params)
   {
     $by = $params['sort_field'] == 'date' ? 'created_at' : 'filename';
@@ -90,7 +153,13 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
       ->where('a.folder_id = ?', $this->getId())
       ->orderBy($by . $dir);
   }
-  public function setParent($folder)
+
+  /**
+   * Sets parent folder.
+   *
+   * @param lyMediaFolder $folder.
+   */
+  public function setParent(lyMediaFolder $folder)
   {
     if(!isset($this->parent) || $this->parent->getId() != $folder->getId())
     {
@@ -98,6 +167,12 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
       $this->updateRelativePath();
     }
   }
+
+  /**
+   * Gets parent folder.
+   *
+   * @return lyMediaFolder.
+   */
   public function getParent()
   {
     if(isset($this->parent))
@@ -109,6 +184,15 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
       return $this->getNode()->getParent();
     }
   }
+
+  /**
+   * Used by synchronize task.
+   *
+   * @param string $baseFolder
+   * @param bool $verbose
+   * @param bool $removeOrphanAssets
+   * @param bool $removeOrphanFolders
+   */
   public function synchronizeWith($baseFolder, $verbose = true, $removeOrphanAssets = false, $removeOrphanFolders = false)
   {
     if (!is_dir($baseFolder))
@@ -118,17 +202,19 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
 
     $files = sfFinder::type('file')->maxdepth(0)->ignore_version_control()->in($baseFolder);
     $assets = $this->getAssetsWithFilenames();
+    $fs = new lyMediaFileSystem();
     foreach ($files as $file)
     {
       $basename = basename($file);
       if (!array_key_exists($basename, $assets))
       {
         // File exists, asset does not exist: create asset
-        copy($file, lyMediaTools::getBasePath() . $this->getRelativePath() . $basename);
+        $fs->import($file, $this->getRelativePath() . $basename);
         $lyMediaAsset = new lyMediaAsset();
         $lyMediaAsset->setFolderId($this->getId());
         $lyMediaAsset->setFilename($basename);
         $lyMediaAsset->setType(mime_content_type($file));
+        $lyMediaAsset->setFilesize(filesize($file) / 1024);
         $lyMediaAsset->save();
         if ($verbose)
         {
@@ -229,6 +315,12 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
 
     return $foldernames;
   }
+
+  /**
+   * Returns total file size of folder assets.
+   *
+   * @return int
+   */
   public function sumFileSizes()
   {
     return Doctrine_Query::create()

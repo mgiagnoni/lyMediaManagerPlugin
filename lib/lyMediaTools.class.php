@@ -19,21 +19,6 @@
  */
 class lyMediaTools
 {
-
-  public static function createAssetFolder($folder_path)
-  {
-    $fs = new lyMediaFileSystem();
-    $fs->mkdir($folder_path);
-  }
-  public static function deleteAssetFolder($folder_path)
-  {
-    
-    $path = self::getBasePath() . $folder_path;
-    $paths = array($path, $path . self::getThumbnailFolder());
-
-    $fs = new sfFilesystem();
-    $fs->remove(array_filter($paths, 'file_exists'));
-  }
   public static function formatAssetCaption($asset)
   {
     return(nl2br(wordwrap($asset->getFilename(),sfConfig::get('app_lyMediaManager_caption_row_max_chars',20), "\n", true)));
@@ -206,16 +191,6 @@ class lyMediaTools
         $message = $message . "\n";
     }
     fwrite(STDOUT, $message);
-  }
-  public static function moveAssetFolder($old_path, $new_path)
-  {
-    $old = self::getBasePath() . $old_path;
-    $new = self::getBasePath() . $new_path;
-
-    if(is_dir($old) && !file_exists($new))
-    {
-      rename($old, $new);
-    }
   }
   public static function splitPath($path, $separator = DIRECTORY_SEPARATOR)
   {

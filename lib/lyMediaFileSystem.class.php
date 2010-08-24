@@ -91,7 +91,7 @@ class lyMediaFileSystem
     if(!file_exists($dir))
     {
       $old = umask(0);
-      mkdir($dir, octdec(sfConfig::get('app_lyMediaManager_chmod_folder', '0770')));
+      mkdir($dir, octdec(sfConfig::get('app_lyMediaManager_chmod_folder', '0755')));
       umask($old);
     }
   }
@@ -139,6 +139,24 @@ class lyMediaFileSystem
     }
   }
 
+  /**
+   * Deletes a folder and thumbnail folder (if any).
+   *
+   * @param string $dir folder path (can be relative to web dir).
+   * @param bool $rm_thumbs, if true removes thumbnail folder if present
+   */
+  public function rmdir($dir, $rm_thumbs = true)
+  {
+    $dir = $this->makePathAbsolute($dir);
+    $thumb_dir = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . trim(sfConfig::get('app_lyMediaManager_thumbnail_folder', 'thumbs'), "\/");
+    //TODO: more error checking needed
+    if($rm_thumbs && is_dir($thumb_dir))
+    {
+      rmdir($thumb_dir);
+    }
+    rmdir($dir);
+  }
+  
   /**
    * Deletes a file and related thumbnails.
    *
