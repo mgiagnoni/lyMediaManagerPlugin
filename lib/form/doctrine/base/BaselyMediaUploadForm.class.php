@@ -45,7 +45,7 @@ class BaselyMediaUploadForm extends BaselyMediaAssetForm
   public function processValues($values)
   {
     $values['type'] = $values['filename']->getType();
-    $values['filesize'] = (int) $values['filename']->getSize() / 1024;
+    $values['filesize'] = round($values['filename']->getSize() / 1024);
     return parent::processValues($values);
   }
   protected function doBind(array $values)

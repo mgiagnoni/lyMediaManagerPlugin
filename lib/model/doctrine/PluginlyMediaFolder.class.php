@@ -214,7 +214,7 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
         $lyMediaAsset->setFolderId($this->getId());
         $lyMediaAsset->setFilename($basename);
         $lyMediaAsset->setType(mime_content_type($file));
-        $lyMediaAsset->setFilesize(filesize($file) / 1024);
+        $lyMediaAsset->setFilesize(round(filesize($file) / 1024));
         $lyMediaAsset->save();
         if ($verbose)
         {

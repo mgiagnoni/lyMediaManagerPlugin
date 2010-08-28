@@ -93,7 +93,7 @@ abstract class PluginlyMediaAssetForm extends BaselyMediaAssetForm
     if($this->isNew())
     {
       $values['type'] = $values['filename']->getType();
-      $values['filesize'] = (int) $values['filename']->getSize() / 1024;
+      $values['filesize'] = round($values['filename']->getSize() / 1024);
     }
     return parent::processValues($values);
   }
