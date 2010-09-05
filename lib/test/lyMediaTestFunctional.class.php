@@ -77,11 +77,10 @@ class lyMediaTestFunctional extends sfTestFunctional
 
     if($check_thumbs)
     {
-
-      foreach(lyMediaTools::getThumbnailSettings() as $key => $params)
+      $tn = new lyMediaThumbnails($folder, $file);
+      foreach($tn->getThumbnailPaths() as $file_path)
       {
-        $file_path = lyMediaTools::getThumbnailPath($folder, $file, $key, false);
-        $this->test()->is(is_file($file_path), $exist, 'Thumbnail ' .  $key . '_' . $file . ($exist ? ' has ' : ' has not ') . 'been found');
+        $this->test()->is(is_file($file_path), $exist, 'Thumbnail ' . basename($file_path) . ($exist ? ' has ' : ' has not ') . 'been found');
       }
     }
     return $this;

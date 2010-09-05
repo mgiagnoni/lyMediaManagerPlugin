@@ -5,7 +5,7 @@
       <span>
         <?php echo image_path(lyMediaTools::getAssetURI($asset)); ?>
       </span>
-      <?php foreach(lyMediaTools::getThumbnailSettings() as $type => $params): ?>
+      <?php foreach(lyMediaThumbnails::getThumbnailSettings() as $type => $params): ?>
         <span class="<?php echo $type; ?>">
           <?php echo thumbnail_image_path($asset, $folder->getRelativePath(), $type); ?>
         </span>

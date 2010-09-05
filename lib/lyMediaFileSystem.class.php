@@ -118,8 +118,8 @@ class lyMediaFileSystem
     {
       $src_info = pathinfo($src);
       $dest_info = pathinfo($dest);
-      $src_path = $src_info['dirname'] . DIRECTORY_SEPARATOR . lyMediaTools::getThumbnailFolder() . DIRECTORY_SEPARATOR;
-      $dest_path = $dest_info['dirname'] . DIRECTORY_SEPARATOR . lyMediaTools::getThumbnailFolder() . DIRECTORY_SEPARATOR;
+      $src_path = $src_info['dirname'] . DIRECTORY_SEPARATOR . lyMediaThumbnails::getThumbnailFolder() . DIRECTORY_SEPARATOR;
+      $dest_path = $dest_info['dirname'] . DIRECTORY_SEPARATOR . lyMediaThumbnails::getThumbnailFolder() . DIRECTORY_SEPARATOR;
 
       if(!file_exists($dest_path))
       {
@@ -148,7 +148,7 @@ class lyMediaFileSystem
   public function rmdir($dir, $rm_thumbs = true)
   {
     $dir = $this->makePathAbsolute($dir);
-    $thumb_dir = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . trim(sfConfig::get('app_lyMediaManager_thumbnail_folder', 'thumbs'), "\/");
+    $thumb_dir = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . lyMediaThumbnails::getThumbnailFolder();
     //TODO: more error checking needed
     if($rm_thumbs && is_dir($thumb_dir))
     {
@@ -175,7 +175,7 @@ class lyMediaFileSystem
     if($thumbs)
     {
       $info = pathinfo($file);
-      $path = $info['dirname'] . DIRECTORY_SEPARATOR . lyMediaTools::getThumbnailFolder() . DIRECTORY_SEPARATOR;
+      $path = $info['dirname'] . DIRECTORY_SEPARATOR . lyMediaThumbnails::getThumbnailFolder() . DIRECTORY_SEPARATOR;
 
       foreach($this->getThumbnailTypes() as $key)
       {
@@ -195,11 +195,6 @@ class lyMediaFileSystem
    */
   protected function getThumbnailTypes()
   {
-    return array_keys(
-      sfConfig::get('app_lyMediaManager_thumbnails', array(
-      'small' => array('width' => 84, 'height' => 84, 'shave' => true),
-      'medium' => array('width' => 194, 'height' => 152)
-      ))
-    );
+    return array_keys(lyMediaThumbnails::getThumbnailSettings());
   }
 }

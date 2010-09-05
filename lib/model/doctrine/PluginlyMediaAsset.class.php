@@ -84,7 +84,8 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
       }
       if($record->supportsThumbnails())
       {
-        lyMediaTools::generateThumbnails($record->getFolderPath(), $record->getFilename());
+        $tn = new lyMediaThumbnails($record->getFolderPath(), $record->getFilename());
+        $tn->generate();
       }
     }
     else

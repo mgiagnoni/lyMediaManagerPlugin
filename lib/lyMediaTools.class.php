@@ -24,54 +24,6 @@ class lyMediaTools
     return(nl2br(wordwrap($asset->getFilename(),sfConfig::get('app_lyMediaManager_caption_row_max_chars',20), "\n", true)));
   }
 
-  public static function generateThumbnails($folder, $filename)
-  {
-    $source = self::getBasePath() . $folder . $filename;
-    $thumbnailSettings = self::getThumbnailSettings();
-
-    foreach ($thumbnailSettings as $key => $params)
-    {
-      $width  = $params['width'];
-      $height = $params['height'];
-      $shave  = isset($params['shave']) ? $params['shave'] : false;
-      self::generateThumbnail($source, self::getThumbnailPath($folder, $filename, $key), $width, $height, $shave);
-    }
-  }
-
-  public static function generateThumbnail($source, $dest, $width, $height, $shave_all = false)
-  {
-    if (class_exists('sfThumbnail') && file_exists($source))
-    {
-      if (sfConfig::get('app_lyMediaManager_use_ImageMagick', false))
-      {
-        $adapter = 'sfImageMagickAdapter';
-        $mime = 'image/jpg';
-      }
-      else
-      {
-        $adapter = 'sfGDAdapter';
-        $mime = 'image/jpeg';
-      }
-      if ($shave_all)
-      {
-        $thumbnail  = new sfThumbnail($width, $height, false, true, 85, $adapter, array('method' => 'shave_all'));
-        $thumbnail->loadFile($source);
-        $thumbnail->save($dest, $mime);
-        return true;
-      }
-      else
-      {
-        list($w, $h, $type, $attr) = getimagesize($source);
-        $newHeight = $width ? ceil(($width * $h) / $w) : $height;
-        $thumbnail = new sfThumbnail($width, $newHeight, true, true, 85, $adapter);
-        $thumbnail->loadFile($source);
-        $thumbnail->save($dest, $mime);
-        return true;
-      }
-    }
-    return false;
-  }
-
   public static function getAllowedExtensions()
   {
     return sfConfig::get('app_lyMediaManager_allowed_extensions',
@@ -135,36 +87,11 @@ class lyMediaTools
     return $thumbnail;
   }
 
-  public static function getThumbnailFolder()
-  {
-    return trim(sfConfig::get('app_lyMediaManager_thumbnail_folder', 'thumbs'), "\/");
-  }
-
-  public static function getThumbnailPath($path, $filename, $thumbnailType, $create = true)
-  {
-    $fs = new lyMediaFileSystem();
-    $folder = $fs->makePathAbsolute($path) . self::getThumbnailFolder();
-    
-    if($create && !file_exists($folder))
-    {
-      $fs->mkdir($folder);
-    }
-    return $folder . DIRECTORY_SEPARATOR . $thumbnailType . '_' . $filename;
-  }
-
-  public static function getThumbnailSettings()
-  {
-    return sfConfig::get('app_lyMediaManager_thumbnails', array(
-      'small' => array('width' => 84, 'height' => 84, 'shave' => true),
-      'medium' => array('width' => 194, 'height' => 152)
-    ));
-  }
-
   public static function getThumbnailURI($asset, $folder_path, $type = 'small')
   {
     if($asset->supportsThumbnails())
     {
-      $img = '/' . (isset($folder_path) ? $folder_path : $asset->getFolderPath()) . self::getThumbnailFolder() . '/' . self::getThumbnailFile($asset, $type);
+      $img = '/' . (isset($folder_path) ? $folder_path : $asset->getFolderPath()) . lyMediaThumbnails::getThumbnailFolder() . '/' . self::getThumbnailFile($asset, $type);
     }
     else
     {
