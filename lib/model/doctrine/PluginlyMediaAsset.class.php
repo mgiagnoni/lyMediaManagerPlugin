@@ -50,6 +50,46 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
   }
 
   /**
+   * Returns asset thumbnail filename.
+   *
+   * @param string $thumb_type thumbnail type.
+   */
+  public function getThumbnailFile($thumb_type = 'small')
+  {
+    $thumbnail = 'unknown.png';
+
+    if($this->supportsThumbnails())
+    {
+      $thumbnail = $thumb_type . '_' . $this->getFilename();
+    }
+    else
+    {
+      list($mtype, $mstype) = explode('/', $this->getType());
+
+      switch($mtype)
+      {
+        case 'image':
+          $thumbnail = 'image-x-generic.png';
+          break;
+        case 'application':
+          switch($mstype)
+          {
+            case 'pdf':
+            case 'x-pdf':
+              $thumbnail = 'application-pdf.png';
+              break;
+          }
+          break;
+        case 'text':
+          $thumbnail = 'text-x-generic.png';
+          break;
+        }
+      }
+
+    return $thumbnail;
+  }
+
+  /**
    * postDelete.
    *
    * @param Doctrine_Event $event

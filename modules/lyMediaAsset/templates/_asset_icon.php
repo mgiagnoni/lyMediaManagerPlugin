@@ -3,7 +3,7 @@
     <?php if($popup): ?>
     <div class="lymedia_popup_info">
       <span>
-        <?php echo image_path(lyMediaTools::getAssetURI($asset)); ?>
+        <?php echo image_path('/' . $asset->getPath()); ?>
       </span>
       <?php foreach(lyMediaThumbnails::getThumbnailSettings() as $type => $params): ?>
         <span class="<?php echo $type; ?>">

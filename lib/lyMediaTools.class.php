@@ -42,63 +42,9 @@ class lyMediaTools
       ));
   }
 
-  public static function getAssetURI($asset)
-  {
-    return '/' . $asset->getPath();
-  }
-
   public static function getBasePath()
   {
     return sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR;
-  }
-
-  public static function getThumbnailFile($asset, $type = 'small')
-  {
-    $thumbnail = 'unknown.png';
-
-    if($asset->supportsThumbnails())
-    {
-      $thumbnail = $type . '_' . $asset->getFilename();
-    }
-    else
-    {
-      list($mtype, $mstype) = explode('/', $asset->getType());
-
-      switch($mtype)
-      {
-        case 'image':
-          $thumbnail = 'image-x-generic.png';
-          break;
-        case 'application':
-          switch($mstype)
-          {
-            case 'pdf':
-            case 'x-pdf':
-              $thumbnail = 'application-pdf.png';
-              break;
-          }
-          break;
-        case 'text':
-          $thumbnail = 'text-x-generic.png';
-          break;
-        }
-      }
-      
-    return $thumbnail;
-  }
-
-  public static function getThumbnailURI($asset, $folder_path, $type = 'small')
-  {
-    if($asset->supportsThumbnails())
-    {
-      $img = '/' . (isset($folder_path) ? $folder_path : $asset->getFolderPath()) . lyMediaThumbnails::getThumbnailFolder() . '/' . self::getThumbnailFile($asset, $type);
-    }
-    else
-    {
-      $img = '/lyMediaManagerPlugin/images/' . self::getThumbnailFile($asset, $type);
-    }
-
-    return $img;
   }
 
   public static function log($message, $color = '')

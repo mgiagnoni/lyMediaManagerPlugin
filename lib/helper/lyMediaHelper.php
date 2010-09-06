@@ -34,9 +34,23 @@ function path_links($folder, $popup = false, $separator = ' / ')
 
 function thumbnail_image_tag($asset, $folder_path = null, $type ='small', $options = array())
 {
-  return image_tag(lyMediaTools::getThumbnailURI($asset, $folder_path, $type), $options);
+  return image_tag(thumbnail_uri($asset, $folder_path, $type), $options);
 }
 function thumbnail_image_path($asset, $folder_path = null, $type ='small')
 {
-  return image_path(lyMediaTools::getThumbnailURI($asset, $folder_path, $type));
+  return image_path(thumbnail_uri($asset, $folder_path, $type));
+}
+
+function thumbnail_uri($asset, $folder_path = null, $type ='small')
+{
+  if($asset->supportsThumbnails())
+  {
+    $uri = '/' . (isset($folder_path) ? $folder_path : $asset->getFolderPath()) . lyMediaThumbnails::getThumbnailFolder() . '/' . $asset->getThumbnailFile($type);
+  }
+  else
+  {
+    $uri = '/lyMediaManagerPlugin/images/' . $asset->getThumbnailFile($type);
+  }
+
+   return $uri;
 }
