@@ -19,7 +19,7 @@ include $configuration->getSymfonyLibDir().'/vendor/lime/lime.php';
 $configuration = ProjectConfiguration::getApplicationConfiguration( 'frontend', 'test', true);
 
 //Remove test dirs
-$rootdir = lyMediaTools::getBasePath() . 'test_root';
+$rootdir = sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'test_root';
 if(is_dir($rootdir))
 {
   $files = sfFinder::type('any')->maxdepth(4)->in($rootdir);

@@ -71,16 +71,15 @@ class lyMediaTestFunctional extends sfTestFunctional
    */
   protected function checkFile($folder, $file, $check_thumbs = true, $exist = true)
   {
-    $file_path = lyMediaTools::getBasePath() . $folder . $file;
-
-    $this->test()->is(is_file($file_path), $exist, 'File ' . $folder . $file . ($exist ? ' has ' : ' has not ') . 'been found');
+    $fs = new lyMediaFileSystem();
+    $this->test()->is($fs->is_file($folder . $file), $exist, 'File ' . $folder . $file . ($exist ? ' has ' : ' has not ') . 'been found');
 
     if($check_thumbs)
     {
       $tn = new lyMediaThumbnails($folder, $file);
       foreach($tn->getThumbnailPaths() as $file_path)
       {
-        $this->test()->is(is_file($file_path), $exist, 'Thumbnail ' . basename($file_path) . ($exist ? ' has ' : ' has not ') . 'been found');
+        $this->test()->is($fs->is_file($file_path), $exist, 'Thumbnail ' . basename($file_path) . ($exist ? ' has ' : ' has not ') . 'been found');
       }
     }
     return $this;

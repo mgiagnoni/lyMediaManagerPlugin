@@ -63,6 +63,30 @@ class lyMediaFileSystem
   }
 
   /**
+   * Checks if a path is a regular directory.
+   *
+   * @param string $path (can be relative to web dir)
+   * @return bool
+   */
+  public function is_dir($path)
+  {
+    $path = $this->makePathAbsolute($path);
+    return is_dir($path);
+  }
+
+  /**
+   * Checks if a path is a regular file.
+   *
+   * @param string $path (can be relative to web dir)
+   * @return bool
+   */
+  public function is_file($path)
+  {
+    $path = $this->makePathAbsolute($path);
+    return is_file($path);
+  }
+  
+  /**
    * Transforms a path relative to web dir (for example the value of relativePath
    * property of lyMediaFolder class) in absolute path.
    *

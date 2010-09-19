@@ -54,3 +54,7 @@ function thumbnail_uri($asset, $folder_path = null, $type ='small')
 
    return $uri;
 }
+function format_asset_caption($asset)
+{
+  return(nl2br(wordwrap($asset->getFilename(),sfConfig::get('app_lyMediaManager_caption_row_max_chars',20), "\n", true)));
+}

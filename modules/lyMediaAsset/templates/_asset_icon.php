@@ -15,7 +15,7 @@
     <?php echo thumbnail_image_tag($asset, $folder->getRelativePath(), 'small', 'alt=asset title=' . $asset->getTitle()); ?>
   </div>
   <div class="lymedia_caption">
-    <?php echo lyMediaTools::formatAssetCaption($asset); ?>
+    <?php echo format_asset_caption($asset); ?>
   </div>
   <div class="lymedia_iconbar">
     <ul class="lymedia_actions_icons">

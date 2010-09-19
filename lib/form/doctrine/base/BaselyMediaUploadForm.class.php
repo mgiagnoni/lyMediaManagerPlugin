@@ -35,7 +35,7 @@ class BaselyMediaUploadForm extends BaselyMediaAssetForm
     $this->widgetSchema['filename'] = new sfWidgetFormInputFile();
     $this->validatorSchema['filename'] = new lyMediaValidatorFile(array(
       'required' => 'true',
-      'path' => lyMediaTools::getBasePath() . $this->getOption('folder')->getRelativePath(),
+      'path' => $this->getOption('folder')->getRelativePath(),
       'mime_types' => lyMediaTools::getAllowedMimeTypes(),
       'allowed_extensions' => lyMediaTools::getAllowedExtensions()
     ));

@@ -248,7 +248,7 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
       }
     }
 
-    $dirs = sfFinder::type('dir')->maxdepth(0)->discard(lyMediaTools::getThumbnailFolder())->ignore_version_control()->in($baseFolder);
+    $dirs = sfFinder::type('dir')->maxdepth(0)->discard(lyMediaThumbnails::getThumbnailFolder())->ignore_version_control()->in($baseFolder);
     $folders = $this->getSubfoldersWithFolderNames();
     foreach ($dirs as $dir)
     {

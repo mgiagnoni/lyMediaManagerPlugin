@@ -25,7 +25,7 @@ $configuration = ProjectConfiguration::getApplicationConfiguration($app, 'test',
 sfContext::createInstance($configuration);
 
 //Remove test dirs
-$rootdir = lyMediaTools::getBasePath() . sfConfig::get('app_lyMediaManager_media_root', 'media');
+$rootdir = sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . sfConfig::get('app_lyMediaManager_media_root', 'media');
 $test_dirs = array($rootdir . '/testsub1', $rootdir . '/testsub2');
 $files = sfFinder::type('any')->maxdepth(4)->in($test_dirs);
 

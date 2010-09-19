@@ -19,11 +19,6 @@
  */
 class lyMediaTools
 {
-  public static function formatAssetCaption($asset)
-  {
-    return(nl2br(wordwrap($asset->getFilename(),sfConfig::get('app_lyMediaManager_caption_row_max_chars',20), "\n", true)));
-  }
-
   public static function getAllowedExtensions()
   {
     return sfConfig::get('app_lyMediaManager_allowed_extensions',
@@ -40,11 +35,6 @@ class lyMediaTools
         'image/x-png',
         'image/gif'
       ));
-  }
-
-  public static function getBasePath()
-  {
-    return sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR;
   }
 
   public static function log($message, $color = '')
