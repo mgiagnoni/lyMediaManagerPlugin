@@ -171,14 +171,19 @@ class lyMediaFileSystem
    */
   public function rmdir($dir, $rm_thumbs = true)
   {
-    $dir = $this->makePathAbsolute($dir);
-    $thumb_dir = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . lyMediaThumbnails::getThumbnailFolder();
-    //TODO: more error checking needed
-    if($rm_thumbs && is_dir($thumb_dir))
+    $dirs[] = $this->makePathAbsolute($dir);
+    if($rm_thumbs)
     {
-      rmdir($thumb_dir);
+      $dirs[] = rtrim($dirs[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . lyMediaThumbnails::getThumbnailFolder();
     }
-    rmdir($dir);
+    foreach(array_reverse(array_filter($dirs, 'is_dir')) as $dir)
+    {
+
+      if(!@rmdir($dir))
+      {
+        throw new lyMediaException('Can\'t delete folder');
+      }
+    }
   }
   
   /**
@@ -193,7 +198,10 @@ class lyMediaFileSystem
 
     if(file_exists($file))
     {
-      unlink($file);
+      if(!@unlink($file))
+      {
+        throw new lyMediaException('Can\'t delete file "%file%" (permission denied).', array('%file%' => basename($file)));
+      }
     }
 
     if($thumbs)
@@ -204,9 +212,13 @@ class lyMediaFileSystem
       foreach($this->getThumbnailTypes() as $key)
       {
         $file = $path . $key . '_' . $info['basename'];
+
         if(file_exists($file))
         {
-          unlink($file);
+          if(!@unlink($file))
+          {
+            throw new lyMediaException('Can\'t delete thumbnail "%file%" (permission denied).', array('%file%' => basename($file)));
+          }
         }
       }
     }

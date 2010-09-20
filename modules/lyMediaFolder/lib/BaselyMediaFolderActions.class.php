@@ -73,13 +73,18 @@ abstract class BaselyMediaFolderActions extends autoLyMediaFolderActions
         $this->redirect($redir);
       }
       
-      $object->getNode()->delete();
+      $object = $object->getNode();
     } 
-    else 
+
+    try
     {
       $object->delete();
     }
-
+    catch(lyMediaException $e)
+    {
+      $this->getUser()->setFlash('error', strtr($e->getMessage(), $e->getMessageParams()));
+      $this->redirect($redir);
+    }
     $this->getUser()->setFlash('notice', 'Folder successfully deleted.');
 
     $this->redirect($redir);

@@ -99,9 +99,14 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
 
     $this->dispatcher->notify(new sfEvent($this, 'admin.delete_object', array('object' => $this->getRoute()->getObject())));
 
-    if ($this->getRoute()->getObject()->delete())
+    try
     {
+      $this->getRoute()->getObject()->delete();
       $this->getUser()->setFlash('notice', 'The item was deleted successfully.');
+    }
+    catch(lyMediaException $e)
+    {
+      $this->getUser()->setFlash('error', strtr($e->getMessage(), $e->getMessageParams()));
     }
 
     if($this->getUser()->getAttribute('view') == 'icons')
@@ -113,7 +118,7 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
       $this->redirect('@ly_media_asset');
     }
   }
-  
+
   /**
    * Uploads an asset
    * 
@@ -151,5 +156,36 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
       $this->getUser()->setFlash('error', $msg);
     }
     $this->redirect('@ly_media_asset_icons?folder_id=' . $this->getUser()->getAttribute('folder_id', 0) . ($this->getUser()->getAttribute('popup', 0) ? '&popup=1' : ''));
+  }
+
+  /**
+   * Deletes multiple assets (batch)
+   *
+   * @param sfWebRequest $request
+   */
+  protected function executeBatchDelete(sfWebRequest $request)
+  {
+    $ids = $request->getParameter('ids');
+
+    $records = Doctrine_Query::create()
+      ->from('lyMediaAsset')
+      ->whereIn('id', $ids)
+      ->execute();
+
+    foreach ($records as $record)
+    {
+      try
+      {
+        $record->delete();
+      }
+      catch(lyMediaException $e)
+      {
+        $this->getUser()->setFlash('error', strtr($e->getMessage(), $e->getMessageParams()));
+        $this->redirect('@ly_media_asset');
+      }
+    }
+
+    $this->getUser()->setFlash('notice', 'The selected items have been deleted successfully.');
+    $this->redirect('@ly_media_asset');
   }
 }
