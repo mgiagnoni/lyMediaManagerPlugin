@@ -107,6 +107,50 @@ Some configuration parameters can be set inside the `app.yml` file of your appli
 
 Note: `small` and `medium` size thumbnails are used by the plugin itself and should not be removed. More thumbnails of desired sizes can be created for use in your application.
 
+## Customizing views
+
+Media library contents can be displayed and managed in different views: `list view` and `icons view`.
+
+The `list view` is a sortable list created with the standard Doctrine admin generator templates and can be customized as any other module created with the task `doctrine:generate-admin`. Here are some quick instructions.
+
+First create a folder `lyMediaAsset` and a subfolder `config` inside the `modules` folder of the application where you have enabled the plugin module. Then add a `generator.yml` file inside `config`
+
+    %project_dir%
+      apps
+        %app_name% (likely `backend`)
+          modules
+            lyMediaAsset
+              config
+                generator.yml
+
+You can now safely customize the `list view` layout in your own `generator.yml` file without losing your changes when you upgrade the plugin. A complete list of all parameters and settings you can use in configuration files is available in symfony [official documentation](http://www.symfony-project.org/reference/1_4/en/06-Admin-Generator "The symfony Reference Book"). Here are a couple of simple examples.
+
+Always remember to issue a `symfony clear-cache` command to see the effect of any change made to a configuration file in the production environment.
+
+    #%project_dir%/apps/%app_name%/modules/lyMediaAsset/config/generator.yml
+
+    generator:
+      param:
+        config:
+          fields:
+            created_at: {date_format: 'd MMM, yyyy'}
+          list:
+            display: [_td_image,title,description,created_at]
+            title: Assets List
+
+With this configuration the list layout displays the following columns: asset thumbnail, title, description, creation date. We have also set a custom page title and a date format for `creation date` column.
+
+The `display` option contains an array of columns: a column can show not only field values (`title`, `description`, `created_at` in our example), but also partials (`_td_image` defined in `%project_dir%/plugins/lyMediaManagerPlugin/modules/lyMediaAsset/templates`), components (not used in our example) and any value returned by a **getter method** declared in model class. Let see an example.
+
+With the default layout the first column of the list displays a thumbnail or icon. We may want to replace it with the asset path to save space: to do so it's sufficient to change our `generator.yml` in this way.
+
+    ...
+          list:
+            display: [path,title,description,created_at]
+    ...
+
+If you look at the definition of the class `lyMediaAsset` in plugin `schema.yml` you won't find a column named `path` : the list column will show the value returned by `lyMediaAsset::getPath()` method.
+
 ## Synchronize task
 
 A dedicated task is available to synchronize the media library database with the contents of a directory.

@@ -8,13 +8,15 @@ generator:
     singular:              ~
     plural:                ~
     route_prefix:          ly_media_asset
-    with_doctrine_route:     1
+    with_doctrine_route:   true
 
     config:
+      fields:
+        td_image: {label: Image}
       list:
         table_method: retrieveAssetList
         title: Media Manager
-        display: [_td_image, title, description, type]
+        display: [_td_image, title, description]
         actions:
           _new: ~
       form: ~
