@@ -87,6 +87,18 @@ class lyMediaFileSystem
   }
   
   /**
+   * Checks if a folder/file is writable.
+   * 
+   * @param string $path (can be relative to web dir)
+   * @return bool
+   */
+  public function is_writable($path)
+  {
+    $path = $this->makePathAbsolute($path);
+    return is_writable($path);
+  }
+  
+  /**
    * Transforms a path relative to web dir (for example the value of relativePath
    * property of lyMediaFolder class) in absolute path.
    *
@@ -104,19 +116,23 @@ class lyMediaFileSystem
   }
 
   /**
-   * Creates a folder an sets permissions accordingly to plugin configuration.
+   * Creates a folder and sets permissions accordingly to plugin configuration.
    *
    * @param string $dir folder path (can be relative to web dir).
    */
   public function mkdir($dir)
   {
     $dir = $this->makePathAbsolute($dir);
-    //TODO: more error checking needed
+
     if(!file_exists($dir))
     {
       $old = umask(0);
-      mkdir($dir, octdec(sfConfig::get('app_lyMediaManager_chmod_folder', '0755')));
+      $ok = @mkdir($dir, octdec(sfConfig::get('app_lyMediaManager_chmod_folder', '0755')));
       umask($old);
+      if(!$ok)
+      {
+        throw new lyMediaException('Can\'t create folder');
+      }
     }
   }
 
@@ -196,14 +212,6 @@ class lyMediaFileSystem
   {
     $file = $this->makePathAbsolute($file);
 
-    if(file_exists($file))
-    {
-      if(!@unlink($file))
-      {
-        throw new lyMediaException('Can\'t delete file "%file%" (permission denied).', array('%file%' => basename($file)));
-      }
-    }
-
     if($thumbs)
     {
       $info = pathinfo($file);
@@ -211,15 +219,22 @@ class lyMediaFileSystem
 
       foreach($this->getThumbnailTypes() as $key)
       {
-        $file = $path . $key . '_' . $info['basename'];
+        $tfile = $path . $key . '_' . $info['basename'];
 
-        if(file_exists($file))
+        if(file_exists($tfile))
         {
-          if(!@unlink($file))
+          if(!@unlink($tfile))
           {
-            throw new lyMediaException('Can\'t delete thumbnail "%file%" (permission denied).', array('%file%' => basename($file)));
+            throw new lyMediaException('Can\'t delete thumbnail "%file%" (permission denied).', array('%file%' => basename($tfile)));
           }
         }
+      }
+    }
+    if(file_exists($file))
+    {
+      if(!@unlink($file))
+      {
+        throw new lyMediaException('Can\'t delete file "%file%" (permission denied).', array('%file%' => basename($file)));
       }
     }
   }

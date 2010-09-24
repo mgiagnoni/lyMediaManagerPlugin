@@ -87,13 +87,15 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
   public function preDelete($event)
   {
     $record = $event->getInvoker();
-    
-    //Delete folder contents
-    foreach($record->getAssets() as $a)
-    {
-      $a->delete();
-    }
     $fs = new lyMediaFileSystem();
+    if($fs->is_writable($record->getNode()->getParent()->getRelativePath()))
+    {
+      //Delete folder contents
+      foreach($record->getAssets() as $a)
+      {
+        $a->delete();
+      }
+    }
     $fs->rmdir($record->getRelativePath());
   }
 

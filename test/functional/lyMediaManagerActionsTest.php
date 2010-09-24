@@ -16,6 +16,7 @@
  * @version     SVN: $Id$
  */
 include dirname(__FILE__).'/../bootstrap/functional.php';
+Doctrine::loadData(dirname(__FILE__) . '/../data/fixtures/fixtures.yml');
 
 $subf1 = Doctrine::getTable('lyMediaFolder')
   ->findOneByName('testsub1');

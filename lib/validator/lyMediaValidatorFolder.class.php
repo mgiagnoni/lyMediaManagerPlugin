@@ -20,6 +20,7 @@ class lyMediaValidatorFolder extends sfValidatorBase
   public function configure($options = array(), $messages = array())
   {
     $this->addMessage('folder_exists', 'Can\'t create "%name%". A folder with the same name exists in "%parent%"');
+    $this->addMessage('parent_unwritable', 'File system error: can\'t create "%name%" as "%parent%" is not writable or doesn\'t exist.');
   }
   protected function doClean($values)
   {
@@ -37,6 +38,12 @@ class lyMediaValidatorFolder extends sfValidatorBase
       $parent = $object->getNode()->getParent();
     }
 
+    $fs = new lyMediaFileSystem();
+    if(!$fs->is_dir($parent->getRelativePath()) || !$fs->is_writable($parent->getRelativePath()))
+    {
+      throw new sfValidatorError($this, 'parent_unwritable', array('name' => $values['name'], 'parent' => $parent->getName()));
+    }
+    
     if(!$parent || !$parent->getNode()->isValidNode())
     {
       throw new sfValidatorError($this, 'invalid');

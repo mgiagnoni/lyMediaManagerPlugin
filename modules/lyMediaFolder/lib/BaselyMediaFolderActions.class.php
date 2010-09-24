@@ -29,9 +29,15 @@ abstract class BaselyMediaFolderActions extends autoLyMediaFolderActions
 
     if($form->isValid())
     {
-      $form->save();
-      $this->getUser()->setFlash('notice', 'Folder successfully created.');
-      
+      try
+      {
+        $form->save();
+        $this->getUser()->setFlash('notice', 'Folder successfully created.');
+      }
+      catch(lyMediaException $e)
+      {
+        $this->getUser()->setFlash('error', strtr($e->getMessage(), $e->getMessageParams()));
+      }
     }
     else
     {

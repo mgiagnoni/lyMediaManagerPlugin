@@ -148,6 +148,10 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
         $msg = 'Error on file name: ';
         $msg .= $form['filename']->getError()->getMessage();
       }
+      if($form['folder_id']->hasError())
+      {
+        $msg = $form['folder_id']->getError()->getMessage();
+      }
       elseif($form->hasGlobalErrors())
       {
         $errors = $form->getGlobalErrors();

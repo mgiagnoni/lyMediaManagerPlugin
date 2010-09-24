@@ -1,0 +1,8 @@
+lyMediaFolder:
+  media:
+    name: media
+    children:
+      sub1:
+        name: testsub1
+      sub2:
+        name: testsub2

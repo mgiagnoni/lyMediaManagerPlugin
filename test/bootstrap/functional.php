@@ -34,7 +34,6 @@ $fs->remove($files);
 $fs->remove(array_filter($test_dirs, 'file_exists'));
 
 new sfDatabaseManager($configuration);
-Doctrine::loadData(dirname(__FILE__) . '/../data/fixtures/');
 
 //Copy assets files for test
 copy(dirname(__FILE__) . '/../data/assets/asseta.png', dirname(__FILE__) . '/../data/assets/asset1.png');

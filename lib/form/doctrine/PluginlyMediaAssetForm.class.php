@@ -29,7 +29,7 @@ abstract class PluginlyMediaAssetForm extends BaselyMediaAssetForm
     );
 
     $this->widgetSchema['folder_id']->setOption('method','getIndentName');
-
+    
     if($this->isNew())
     {
       $this->widgetSchema['filename'] = new sfWidgetFormInputFile();
@@ -61,8 +61,8 @@ abstract class PluginlyMediaAssetForm extends BaselyMediaAssetForm
         'required' => true,
         'allowed_extensions' => lyMediaTools::getAllowedExtensions()
       ));
-      $this->validatorSchema->setPostValidator(new lyMediaValidatorAsset());
     }
+    $this->validatorSchema->setPostValidator(new lyMediaValidatorAsset());
   }
 
   protected function doBind(array $values)
