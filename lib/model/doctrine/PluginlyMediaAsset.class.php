@@ -83,6 +83,12 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
         case 'text':
           $thumbnail = 'text-x-generic.png';
           break;
+        case 'video':
+          $thumbnail = 'video-x-generic.png';
+          break;
+        case 'audio':
+          $thumbnail = 'audio-x-generic.png';
+          break;
         }
       }
 
