@@ -71,7 +71,7 @@ abstract class PluginlyMediaAssetForm extends BaselyMediaAssetForm
     {
       if($values['folder_id'])
       {
-        $folder = Doctrine::getTable('lyMediaFolder')
+        $folder = lyMediaFolderTable::getInstance()
           ->find($values['folder_id']);
         $this->validatorSchema['filename']
           ->setOption('path', $this->getOption('upload_root') . $folder->getPath());

@@ -25,7 +25,7 @@ class lyMediaValidatorAsset extends sfValidatorBase
   }
   protected function doClean($values)
   {
-    $folder = Doctrine::getTable('lyMediaFolder')
+    $folder = lyMediaFolderTable::getInstance()
         ->find($values['folder_id']);
 
     if($folder === false)

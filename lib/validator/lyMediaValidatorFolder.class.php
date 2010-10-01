@@ -27,13 +27,13 @@ class lyMediaValidatorFolder extends sfValidatorBase
     $my_id = 0;
     if($values['parent_id'])
     {
-      $parent = Doctrine::getTable('lyMediaFolder')
+      $parent = lyMediaFolderTable::getInstance()
         ->find($values['parent_id']);
     }
     else
     {
       $my_id = $values['id'];
-      $object = Doctrine::getTable('lyMediaFolder')
+      $object = lyMediaFolderTable::getInstance()
         ->find($my_id);
       $parent = $object->getNode()->getParent();
     }

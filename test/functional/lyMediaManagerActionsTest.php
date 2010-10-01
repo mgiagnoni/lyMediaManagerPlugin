@@ -16,12 +16,12 @@
  * @version     SVN: $Id$
  */
 include dirname(__FILE__).'/../bootstrap/functional.php';
-Doctrine::loadData(dirname(__FILE__) . '/../data/fixtures/fixtures.yml');
+Doctrine_Core::loadData(dirname(__FILE__) . '/../data/fixtures/fixtures.yml');
 
-$subf1 = Doctrine::getTable('lyMediaFolder')
+$subf1 = lyMediaFolderTable::getInstance()
   ->findOneByName('testsub1');
 
-$subf2 = Doctrine::getTable('lyMediaFolder')
+$subf2 = lyMediaFolderTable::getInstance()
   ->findOneByName('testsub2');
 
 $browser = new lyMediaTestFunctional(new sfBrowser());
@@ -175,7 +175,7 @@ $browser->
   info('  4.4 - Check new asset files')
 ;
 
-$asset = Doctrine::getTable('lyMediaAsset')
+$asset = lyMediaAssetTable::getInstance()
   ->findOneByTitle('test');
 
 $folder = $asset->getFolderPath();

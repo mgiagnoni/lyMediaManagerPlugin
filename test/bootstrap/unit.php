@@ -29,6 +29,6 @@ if(is_dir($rootdir))
 }
 
 new sfDatabaseManager($configuration);
-Doctrine::dropDatabases();
-Doctrine::createDatabases();
-Doctrine::createTablesFromModels(sfConfig::get('sf_lib_dir').'/model');
+Doctrine_Core::dropDatabases();
+Doctrine_Core::createDatabases();
+Doctrine_Core::createTablesFromModels(sfConfig::get('sf_lib_dir').'/model');

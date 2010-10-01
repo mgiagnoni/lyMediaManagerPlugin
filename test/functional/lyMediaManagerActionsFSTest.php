@@ -16,15 +16,15 @@
  * @version     SVN: $Id$
  */
 include dirname(__FILE__).'/../bootstrap/functional.php';
-Doctrine::loadData(dirname(__FILE__) . '/../data/fixtures/fixtures_fs.yml');
+Doctrine_Core::loadData(dirname(__FILE__) . '/../data/fixtures/fixtures_fs.yml');
 
 $root = Doctrine::getTable('lyMediaFolder')
   ->findOneByName('media');
 
-$subf1 = Doctrine::getTable('lyMediaFolder')
+$subf1 = lyMediaFolderTable::getInstance()
   ->findOneByName('testsub1');
 
-$subf2 = Doctrine::getTable('lyMediaFolder')
+$subf2 = lyMediaFolderTable::getInstance()
   ->findOneByName('testsub2');
 
 //Creates some test assets. Cannot be done in fixtures

@@ -1,10 +1,10 @@
 <?php
 include(dirname(__FILE__).'/../bootstrap/unit.php');
 
-$conn = Doctrine::getTable('lyMediaFolder')
+$conn = lyMediaFolderTable::getInstance()
   ->getConnection();
 
-$root = Doctrine::getTable('lyMediaFolder')
+$root = lyMediaFolderTable::getInstance()
   ->createRoot('test_root');
 
 $fs = new lyMediaFileSystem();

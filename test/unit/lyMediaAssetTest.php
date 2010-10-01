@@ -2,7 +2,7 @@
 include(dirname(__FILE__).'/../bootstrap/unit.php');
 
 //Create folders for tests
-$root = Doctrine::getTable('lyMediaFolder')
+$root = lyMediaFolderTable::getInstance()
   ->createRoot('test_root');
 
 $folder = new lyMediaFolder();

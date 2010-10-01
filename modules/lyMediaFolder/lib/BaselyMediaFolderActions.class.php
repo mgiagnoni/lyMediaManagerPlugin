@@ -19,7 +19,7 @@ abstract class BaselyMediaFolderActions extends autoLyMediaFolderActions
 {
   public function executeAdd(sfWebRequest $request)
   {
-    $parent = Doctrine::getTable('lyMediaFolder')
+    $parent = lyMediaFolderTable::getInstance()
       ->retrieveCurrent($this->getUser()->getAttribute('folder_id', 0));
 
     $form = new lyMediaCreateFolderForm(null, array(

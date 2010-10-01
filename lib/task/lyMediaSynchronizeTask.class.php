@@ -30,7 +30,7 @@ EOF;
   {
     $databaseManager = new sfDatabaseManager($this->configuration);
 
-    $rootFolder = Doctrine::getTable('lyMediaFolder')
+    $rootFolder = lyMediaFolderTable::getInstance()
         ->getRoot();
     
     //TODO: check if media root has been created

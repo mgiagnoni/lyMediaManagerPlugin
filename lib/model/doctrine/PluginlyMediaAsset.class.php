@@ -140,13 +140,13 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
       if(isset($modified['folder_id']) || isset($modified['filename']))
       {
         //Selected new folder or edited filename: move/rename asset
-        $dest_folder = Doctrine::getTable('lyMediaFolder')
+        $dest_folder = lyMediaFolderTable::getInstance()
           ->find($record->getFolderId());
 
         $src_folder = $dest_folder;
         if(isset($modified['folder_id']))
         {
-          $src_folder = Doctrine::getTable('lyMediaFolder')
+          $src_folder = lyMediaFolderTable::getInstance()
           ->find($modified['folder_id']);
         }
 

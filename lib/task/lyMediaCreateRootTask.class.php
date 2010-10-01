@@ -47,13 +47,13 @@ EOF;
   {
     $databaseManager = new sfDatabaseManager($this->configuration);
 
-    if (Doctrine::getTable('lyMediaFolder')->getRoot())
+    if (lyMediaFolderTable::getInstance()->getRoot())
     {
       throw new sfException('The media library already has a root');
     }
 
     $this->logSection('media-manager', sprintf('Creating root node at %s...', sfConfig::get('app_lyMediaManager_media_root', 'media')), null, 'COMMENT');
-    Doctrine::getTable('lyMediaFolder')
+    lyMediaFolderTable::getInstance()
       ->createRoot(sfConfig::get('app_lyMediaManager_media_root', 'media'));
     
     $this->logSection('media-manager', 'Root Node Created', null, 'INFO');

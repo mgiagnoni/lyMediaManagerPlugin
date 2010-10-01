@@ -44,7 +44,7 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
       $this->getUser()->setAttribute('page', 1);
     }
     $folder_id = $this->getUser()->getAttribute('folder_id', 0);
-    $this->folder = Doctrine::getTable('lyMediaFolder')
+    $this->folder = lyMediaFolderTable::getInstance()
       ->retrieveCurrent($folder_id);
 
     $this->forward404Unless($this->folder);
@@ -126,7 +126,7 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
    */
   public function executeUpload(sfWebRequest $request)
   {
-    $folder = Doctrine::getTable('lyMediaFolder')
+    $folder = lyMediaFolderTable::getInstance()
       ->retrieveCurrent($this->getUser()->getAttribute('folder_id', 0));
 
     $form = new lyMediaUploadForm(null, array(
