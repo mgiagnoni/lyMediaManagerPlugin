@@ -17,6 +17,10 @@ generator:
         table_method: retrieveAssetList
         title: Media Manager
         display: [_td_image, title, description]
+        object_actions:
+          _edit: ~
+          _delete: ~
+          download: {action: download}
         actions:
           _new: ~
       form: ~

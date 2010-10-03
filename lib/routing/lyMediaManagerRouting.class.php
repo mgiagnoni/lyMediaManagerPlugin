@@ -30,6 +30,7 @@ class lyMediaManagerRouting
       'with_wildcard_routes' => true,
       'collection_actions' => array('filter' => 'post', 'batch' => 'post'),
       'requirements' => array(),
+      'object_actions' => array('download' => 'get')
     )));
 
     $r->prependRoute('ly_media_folder', new sfDoctrineRouteCollection(array(

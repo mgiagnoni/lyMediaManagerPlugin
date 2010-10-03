@@ -25,6 +25,9 @@
       <li class="delete">
         <?php echo link_to(image_tag('/lyMediaManagerPlugin/images/delete', 'alt=delete'), 'ly_media_asset_delete', $asset, array('method' => 'delete', 'confirm' => 'Are you sure?', 'title' => 'delete asset')) ?>
       </li>
+      <li class="download">
+        <?php echo link_to(image_tag('/lyMediaManagerPlugin/images/download', 'alt=download'), 'ly_media_asset_download', $asset, array('title' => 'download asset')) ?>
+      </li>
     </ul>
   </div>
 </div>

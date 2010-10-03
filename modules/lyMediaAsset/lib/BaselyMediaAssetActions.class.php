@@ -192,4 +192,25 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
     $this->getUser()->setFlash('notice', 'The selected items have been deleted successfully.');
     $this->redirect('@ly_media_asset');
   }
+  /**
+   * Downloads an asset file
+   * 
+   * @param sfWebRequest $request 
+   */
+  public function executeDownload(sfWebRequest $request)
+  {
+    $asset = $this->getRoute()->getObject();
+    $fs = new lyMediaFileSystem();
+    $this->file = $fs->makePathAbsolute($asset->getPath());
+    $response = $this->getResponse();
+    $response->setHttpHeader('Content-Description', 'File Transfer');
+    $response->setHttpHeader('Content-disposition', 'attachment; filename=' . $asset->getFilename());
+    $response->setHttpHeader('Content-type', $asset->getType());
+    $response->setHttpHeader('Content-Transfer-Encoding', 'binary');
+    $response->setHttpHeader('Expires', 0);
+    $response->setHttpHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
+    $response->setHttpHeader('Content-Length', filesize($this->file));
+    
+    $this->setLayout(false);
+  }
 }
