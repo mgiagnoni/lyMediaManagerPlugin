@@ -213,4 +213,45 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
     
     $this->setLayout(false);
   }
+
+  /**
+   * (Re)generates thumbnails for selected assets.
+   *
+   * @param sfWebRequest $request
+   */
+  protected function executeBatchGenerateThumbnails(sfWebRequest $request)
+  {
+    $ids = $request->getParameter('ids');
+
+    $records = Doctrine_Query::create()
+      ->from('lyMediaAsset')
+      ->whereIn('id', $ids)
+      ->execute();
+
+    $ct = 0;
+    foreach ($records as $record)
+    {
+      try
+      {
+        if($record->generateThumbnails())
+        {
+          $ct++;
+        }
+      }
+      catch(lyMediaException $e)
+      {
+        $this->getUser()->setFlash('error', strtr($e->getMessage(), $e->getMessageParams()));
+        $this->redirect('@ly_media_asset');
+      }
+    }
+    if($ct > 0)
+    {
+      $this->getUser()->setFlash('notice', 'Thumbnails have been successfully generated for selected items.');
+    }
+    else
+    {
+      $this->getUser()->setFlash('error', 'None of selected items support thumbnails.');
+    }
+    $this->redirect('@ly_media_asset');
+  }
 }

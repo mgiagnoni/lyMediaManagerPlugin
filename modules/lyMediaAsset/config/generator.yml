@@ -23,6 +23,9 @@ generator:
           download: {action: download}
         actions:
           _new: ~
+        batch_actions:
+          delete: ~
+          generatethumbnails: {label: 'Generate thumbnails'}
       form: ~
       edit:
         display:

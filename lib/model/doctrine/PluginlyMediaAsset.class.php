@@ -30,6 +30,22 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
   }
 
   /**
+   * Generates asset thumbnails.
+   *
+   * @return bool, false if thumbnails are not supported.
+   */
+  public function generateThumbnails()
+  {
+    if(!$this->supportsThumbnails())
+    {
+      return false;
+    }
+    $tn = new lyMediaThumbnails($this->getFolderPath(), $this->getFilename());
+    $tn->generate();
+    return true;
+  }
+  
+  /**
    * Returns asset file path.
    *
    * @return string, path (relative to web dir).
@@ -128,11 +144,7 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
         $record->setType(mime_content_type($file));
         $record->setFilename($dest_file);
       }
-      if($record->supportsThumbnails())
-      {
-        $tn = new lyMediaThumbnails($record->getFolderPath(), $record->getFilename());
-        $tn->generate();
-      }
+      $record->generateThumbnails();
     }
     else
     {
