@@ -36,6 +36,16 @@ abstract class PluginlyMediaFolder extends BaselyMediaFolder
   }
 
   /**
+   * (Re)generates thumbanails for all folder assets.
+   */
+  public function generateThumbnails()
+  {
+    foreach($this->getAssets() as $asset)
+    {
+      $asset->generateThumbnails();
+    }
+  }
+  /**
    * Moves a folder under a new parent.
    *
    * @param lyMediaFolder $new_parent, new parent folder.
