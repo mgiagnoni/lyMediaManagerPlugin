@@ -1,6 +1,8 @@
 lyMediaAsset:
   actAs:
     Timestampable: ~
+    I18n:
+      fields: [title, description]
   columns:
     id:
       type: integer(4)
