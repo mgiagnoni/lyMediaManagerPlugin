@@ -68,6 +68,17 @@ lyMediaManagerPlugin provides a custom task to create the media library root dir
 
 This command should be executed by an user of the same group of the http server, if this is not possible chmod/chown the media library root directory so that is writable by the http server.
 
+
+### Configuring i18n
+If you want to enable i18N behavior, add this in your app.yml:
+
+    all:
+      lyMediaManager:
+        use_i18n: true
+      i18n_cultures:
+        en:   English
+        fr:   Français
+
 ### Go to default page
 
 Assuming that you are testing the plugin on localhost and you have enabled modules in your backend application, visit
