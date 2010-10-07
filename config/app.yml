@@ -1,0 +1,9 @@
+all:
+  lyMediaManager:
+    # If enabled, label will become an i18n field
+    use_i18n: false
+    # array of cultures that will be shown in the admin module
+    i18n_cultures: []
+    #  en:   English
+    #  fr:   Français
+

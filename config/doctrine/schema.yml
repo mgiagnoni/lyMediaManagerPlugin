@@ -1,8 +1,11 @@
 lyMediaAsset:
   actAs:
     Timestampable: ~
+# Add i18n conditionally
+    <?php if (sfConfig::get('app_lyMediaManager_use_i18n', false)): ?>
     I18n:
       fields: [title, description]
+<?php endif; ?>
   columns:
     id:
       type: integer(4)
