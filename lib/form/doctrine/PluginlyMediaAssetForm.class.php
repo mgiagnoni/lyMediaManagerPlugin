@@ -28,6 +28,26 @@ abstract class PluginlyMediaAssetForm extends BaselyMediaAssetForm
       $this['updated_at']
     );
 
+
+    // add the i18n label stuff
+    if ($this->getObject()->getTable()->isI18n())
+    {
+      $cultures = sfConfig::get('app_lyMediaManager_i18n_cultures', array());
+      if (isset($cultures[0]))
+      {
+        throw new sfException('Invalid i18n_cultures format in app.yml. Use the format:
+        i18n_cultures:
+          en:   English
+          fr:   Français');
+      }
+
+      $this->embedI18n(array_keys($cultures));
+      foreach ($cultures as $culture => $name)
+      {
+        $this->widgetSchema->setLabel($culture, $name);
+      }
+    }
+
     $this->widgetSchema['folder_id']->setOption('method','getIndentName');
     
     if($this->isNew())
