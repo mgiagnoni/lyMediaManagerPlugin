@@ -42,6 +42,17 @@ Plugin assets must be published with the following symfony command
 
     php symfony plugin:publish-assets
 
+### Configuring i18n
+
+If you want to enable i18N behavior, add this in your app.yml:
+
+    all:
+      lyMediaManager:
+        use_i18n: true
+        i18n_cultures:
+          en: English
+          fr: Français
+
 ### Building models and tables
 
 Then we need to generate plugin model classes and corresponding database tables.
@@ -67,17 +78,6 @@ lyMediaManagerPlugin provides a custom task to create the media library root dir
     php symfony media:create-root
 
 This command should be executed by an user of the same group of the http server, if this is not possible chmod/chown the media library root directory so that is writable by the http server.
-
-
-### Configuring i18n
-If you want to enable i18N behavior, add this in your app.yml:
-
-    all:
-      lyMediaManager:
-        use_i18n: true
-      i18n_cultures:
-        en:   English
-        fr:   Français
 
 ### Go to default page
 

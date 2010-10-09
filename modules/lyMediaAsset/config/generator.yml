@@ -29,7 +29,7 @@ generator:
       form: ~
       edit:
         display:
-          "NONE": [_field_path, folder_id, filename, author, copyright,<?php echo implode(', ', array_keys(sfConfig::get('app_lyMediaManager_i18n_cultures', array()))) ?>]
+          "NONE": [_field_path, folder_id, filename, <?php echo (sfConfig::get('app_lyMediaManager_use_i18n', false) ? implode(', ', array_keys(sfConfig::get('app_lyMediaManager_i18n_cultures', array()))) : 'title,description') ?>,author, copyright]
           "Asset": [_field_image]
       new:
         title: New media
