@@ -11,7 +11,7 @@ $folder->create($root);
 
 $base = sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR . 'test_root' . DIRECTORY_SEPARATOR;
 
-$t = new lime_test(31, new lime_output_color());
+$t = new lime_test(35, new lime_output_color());
 
 $t->info('Create asset');
 $file = dirname(__FILE__) . '/../data/assets/asset1.png';
@@ -88,3 +88,18 @@ $t->ok(!file_exists($base . 'asset.png'), 'deleted file does not exist');
 $t->ok(!file_exists($base . 'thumbs/small_asset.png'), 'Deleted small thumbnail does not exist');
 $t->ok(!file_exists($base . 'thumbs/medium_asset.png'), 'Deleted medium thumbnail does not exist');
 
+$t->info('Create thumbnails');
+//Turn off automatic thumbnail generation
+sfConfig::set('app_lyMediaManager_create_thumbnails_for', array());
+$a = new lyMediaAsset();
+$a->setFolder($root);
+$a->setFilename(dirname(__FILE__) . '/../data/assets/asseta.png');
+$a->save();
+$a->refresh();
+
+$t->ok(!file_exists($base . 'thumbs/small_asseta.png'), 'small thumbnail does not exist');
+$t->ok(!file_exists($base . 'thumbs/medium_asseta.png'), 'medium thumbnail does not exist');
+sfConfig::set('app_lyMediaManager_create_thumbnails_for', array('image/png'));
+$a->generateThumbnails();
+$t->ok(file_exists($base . 'thumbs/small_asseta.png'), 'small thumbnail exists');
+$t->ok(file_exists($base . 'thumbs/medium_asseta.png'), 'medium thumbnail exists');
