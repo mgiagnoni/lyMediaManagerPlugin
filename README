@@ -24,7 +24,7 @@ sfThumbnailPlugin is also needed to generate thumbnails of images.
 
 Alternatively you can uncompress the .tgz package inside the `plugins` directory of your symfony project. If you have Subversion installed you can also install the plugin by checking out the source code from the repository: `cd` to the `plugins` directory of your symfony project and execute
 
-    svn checkout http://svn.symfony-project.com/plugins/lyMediaManagerPlugin/trunk lyMediaManagerPlugin
+    svn checkout http://svn.github.com/mgiagnoni/lyMediaManagerPlugin.git lyMediaManagerPlugin
 
 If you choose the manual installation another two steps are needed. Plugins must be enabled in your project configuration class. Example:
 
@@ -162,7 +162,8 @@ With the default layout the first column of the list displays a thumbnail or ico
 
 If you look at the definition of the class `lyMediaAsset` in plugin `schema.yml` you won't find a column named `path` : the list column will show the value returned by `lyMediaAsset::getPath()` method.
 
-## Synchronize task
+## Tasks
+### Synchronize
 
 A dedicated task is available to synchronize the media library database with the contents of a directory.
 
@@ -178,9 +179,29 @@ Same as above, but in addition every file that is present in the media library w
 
 This time every folder in the media library without a corresponding folder in the directory will be removed. If something it's not clear, play with the task in a development environment to see the effect of these switches.
 
+### Generate thumbnails
+
+The `generate-thumbs` task will regenerate thumbnails for all assets in a given folder or the whole media library, provided thumbnails are supported by asset mime-type (see parameter `create_thumbnails_for` in plugin configuration).
+
+This can be useful once we have added a new thumbnail type or changed the width or height of an existing type in plugin configuration.
+
+    php symfony media:generate-thumbs
+
+Thumbnails are generated for **all** assets of the media library.
+
+    php symfony media:generate-thumbs media/photos
+
+Thumbnails are generated for assets inside the `media/photos` folder **and** all subfolders.
+
+    php symfony media:generate-thumbs media/photos --no-recurse
+
+Thumbnails are generated **only** for assets inside the `media/photos` folder.
+
+Note that all folder paths passed to the task must be **relative**.
+
 ## Working with TinyMCE editor
 
-lyMediaManagerPlugin can work together the TinyMCE editor to make file browsing and file uploading features accessible directly from the editor toolbar. A few configuration steps are needed.
+lyMediaManagerPlugin can work together with the TinyMCE editor to make file browsing and file uploading features accessible directly from the editor toolbar. A few configuration steps are needed.
 
 ### Installing TinyMCE
 
@@ -247,6 +268,12 @@ Then in the configure() method of your form set a class attribute for all textar
 Also refer to comments inside lymedia_tiny_cfg.js file because you may need to edit something depending by the name and location of your front controller.
 
 Using `sfWidgetFormLyMediaTinyMCE` is easier, while manual inclusion of Javascript files is preferable if you want to keep TinyMCE configuration in a separate javascript file e do not want to mix markup and Javascript code in document body. Whichever method you choose, if you have configured everything properly you will see `lyMediaManagerPlugin` file browser when you select the `insert/edit image` button in TinyMCE toolbar and click the `browse` icon in the pop-up window.
+
+## Credits
+
+* This plugin is inspired to (and in part derived from) [sfAssetsLibraryPlugin](http://www.symfony-project.org/plugins/sfAssetsLibraryPlugin).
+* Optional i18n support has been contributed by Vincent Jousse ([vjousse](http://github.com/vjousse)).
+* Icons come from [Tango Icon Library](http://tango.freedesktop.org/Tango_Icon_Library).
 
 ## Todo
 
