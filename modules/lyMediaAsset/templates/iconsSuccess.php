@@ -16,7 +16,8 @@
           'upload_form' => $upload_form,
           'nbfiles' => $pager->getnbResults(),
           'nbfolders' => $nbfolders,
-          'total_size' => $total_size
+          'total_size' => $total_size,
+          'hide' => $hide
         )); ?>
       <div class="popup_help"><?php if($popup) { echo __('Click an image to select it.'); } ?></div>
       <?php include_partial('lyMediaAsset/folder_icon_up', array('folder' => $folder, 'popup' => $popup)); ?>

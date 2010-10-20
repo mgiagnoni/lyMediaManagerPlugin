@@ -62,6 +62,12 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
     }
     $this->sort_dir = $this->getUser()->getAttribute('sort_dir');
 
+    if($request->hasParameter('hide'))
+    {
+      $this->getUser()->setAttribute('hide', $request->getParameter('hide') ? 1:0);
+    }
+    $this->hide = $this->getUser()->getAttribute('hide');
+
     $this->pager = new sfDoctrinePager('lyMediaAsset', sfConfig::get('app_lyMediaManager_assets_per_page', 20));
     $this->pager->setQuery($this->folder->retrieveAssetsQuery(array(
       'sort_field' => $this->sort_field, 
