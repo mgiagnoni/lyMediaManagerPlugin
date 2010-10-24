@@ -15,7 +15,7 @@ lyMediaManager_Tiny.prototype = {
 
     }
 
-    var params = type == 'image' ? 'images_only=1&tiny=1' : 'tiny=1';
+    var params = type == 'image' ? 'images_only=1&editor=tiny' : 'editor=tiny';
     tinyMCE.activeEditor.windowManager.open({
       file :      this.addParams(this.url, params),
       title:      'Media browser',

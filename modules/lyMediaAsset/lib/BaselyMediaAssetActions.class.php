@@ -76,14 +76,32 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
     $this->pager->setPage($this->getUser()->getAttribute('page', 1));
     $this->pager->init();
 
-    $this->popup = $request->getParameter('popup', 0);
-    $this->getUser()->setAttribute('popup', $this->popup ? 1:0);
+    if($request->getParameter('popup'))
+    {
+      $this->getUser()->setAttribute('popup', true);
+    }
+    else
+    {
+      $this->getUser()->getAttributeHolder()->remove('popup');
+    }
 
-    if($this->popup)
+    if($this->popup = $this->getUser()->getAttribute('popup'))
     {
       $this->setLayout($this->getContext()->getConfiguration()->getTemplateDir('lyMediaAsset', 'popupLayout.php') . DIRECTORY_SEPARATOR . 'popupLayout');
-      $this->getResponse()->addJavascript('tiny_mce/tiny_mce_popup');
-      $this->getResponse()->addJavascript('/lyMediaManagerPlugin/js/lymedia_tiny_popup.js', 'last');
+      $this->getResponse()->addJavascript('/lyMediaManagerPlugin/js/lymedia_popup.js');
+      if($request->hasParameter('editor'))
+      {
+        $this->getUser()->setAttribute('editor', $request->getParameter('editor') == 'fck' ? 'fck' : 'tiny');
+      }
+      if($this->getUser()->getAttribute('editor') == 'fck')
+      {
+        $this->getResponse()->addJavascript('/lyMediaManagerPlugin/js/lymedia_fck_popup.js', 'last');
+      }
+      else
+      {
+        $this->getResponse()->addJavascript('tiny_mce/tiny_mce_popup');
+        $this->getResponse()->addJavascript('/lyMediaManagerPlugin/js/lymedia_tiny_popup.js', 'last');
+      }
       $this->getResponse()->addStyleSheet('/lyMediaManagerPlugin/css/lymedia_popup.css');
     }
     $this->getUser()->setAttribute('view', 'icons');
