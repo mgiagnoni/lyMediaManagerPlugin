@@ -177,11 +177,9 @@ $browser->
 
 $asset = lyMediaAssetTable::getInstance()
   ->findOneByTitle('test');
+$old = clone $asset;
 
-$folder = $asset->getFolderPath();
-$file = $asset->getFilename();
-
-$browser->isFile($folder, $file)->
+$browser->isFile($asset)->
   info('5 - Rename asset')->
   saveEdit('lyMediaAsset', array('ly_media_asset' => array(
     'filename' => 'asset1_renamed.png'
@@ -199,11 +197,12 @@ $browser->isFile($folder, $file)->
 
   info('  5.2 - Check renamed asset files')->
   info('    5.2.1 - Old filename must not exist')->
-  isntFile($folder, $file)->
+  isntFile($old)->
   info('    5.2.2 - New filename must exist')->
-  isFile($folder, 'asset1_renamed.png')->
-
-  info('6 - Move asset')->
+  isFile($asset)
+;
+$old = clone $asset;
+$browser-> info('6 - Move asset')->
   saveEdit('lyMediaAsset', array('ly_media_asset' => array(
     'folder_id' => $subf2->getId()
   )))->
@@ -220,9 +219,12 @@ $browser->isFile($folder, $file)->
 
   info('  6.2 - Check moved asset files')->
   info('    6.2.1 - File in source folder must not exist')->
-  isntFile($folder, 'asset1_renamed.png')->
-  info('    6.2.2 - File in destination folder must exist')->
-  isFile($subf2->getRelativePath(), 'asset1_renamed.png')->
+  isntFile($old)
+;
+
+$asset->refresh(true);
+$browser->info('    6.2.2 - File in destination folder must exist')->
+  isFile($asset)->
 
   info('7 - Icons view')->
   get('/ly_media_asset/icons')->

@@ -18,22 +18,25 @@
  */
 class lyMediaThumbnails
 {
-  protected $folder;
-  protected $file;
+  protected $source;
+  protected $thumb_file;
   protected $settings;
+  protected $mime_type;
 
   /**
    * Constructor.
    *
-   * @param string $src_folder source folder path
-   * @param string $src_file source file name (image file from which thumbnails will be generated).
+   * @param string $source source file path (image file from which thumbnails will be generated).
+   * @param string $mime thumbnail mime-type
+   * @param string $thumb_file thumbnail filename (without type prefix)
    */
-  public function __construct($src_folder, $src_file)
+  public function __construct($source, $mime, $thumb_file)
   {
     $fs = new lyMediaFileSystem();
 
-    $this->folder = $fs->makePathAbsolute($src_folder);
-    $this->file = $src_file;
+    $this->source = $fs->makePathAbsolute($source);
+    $this->thumb_file = $thumb_file;
+    $this->mime_type = $mime;
     $this->settings = self::getThumbnailSettings();
   }
 
@@ -68,14 +71,13 @@ class lyMediaThumbnails
    */
   public function getThumbnailPath($thumb_type, $create = true)
   {
-    $folder = $this->folder . self::getThumbnailFolder();
-
+    $folder = pathinfo($this->source, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . self::getThumbnailFolder();
     if($create && !file_exists($folder))
     {
       $fs = new lyMediaFileSystem();
       $fs->mkdir($folder);
     }
-    return $folder . DIRECTORY_SEPARATOR . $thumb_type . '_' . $this->file;
+    return $folder . DIRECTORY_SEPARATOR . $thumb_type . '_' . $this->thumb_file;
   }
 
   /**
@@ -109,47 +111,33 @@ class lyMediaThumbnails
   /**
    * Generate a thumbnail of a given type.
    * 
-   * @param <type> $thumb_type thumbnail type
-   * @param <type> $thumb_options thumbnail options (width, height and other as set in configuration).
+   * @param string $thumb_type thumbnail type
+   * @param array $thumb_options thumbnail options (width, height and other as set in configuration).
    * @return bool true = success, false = failure.
    */
   protected function generateThumbnail($thumb_type, $thumb_options)
   {
-    $source = $this->folder . $this->file;
-    $dest = $this->getThumbnailPath($thumb_type);
-    $width = $thumb_options['width'];
-    $height = $thumb_options['height'];
-    $shave_all = isset($thumb_options['shave']) ? $thumb_options['shave'] : false;
-
-    if (class_exists('sfThumbnail') && file_exists($source))
+    if (!class_exists('sfThumbnail') || !file_exists($this->source))
     {
-      if (sfConfig::get('app_lyMediaManager_use_ImageMagick', false))
-      {
-        $adapter = 'sfImageMagickAdapter';
-        $mime = 'image/jpg';
-      }
-      else
-      {
-        $adapter = 'sfGDAdapter';
-        $mime = 'image/jpeg';
-      }
-      if ($shave_all)
-      {
-        $thumbnail  = new sfThumbnail($width, $height, false, true, 85, $adapter, array('method' => 'shave_all'));
-        $thumbnail->loadFile($source);
-        $thumbnail->save($dest, $mime);
-        return true;
-      }
-      else
-      {
-        list($w, $h, $type, $attr) = getimagesize($source);
-        $newHeight = $width ? ceil(($width * $h) / $w) : $height;
-        $thumbnail = new sfThumbnail($width, $newHeight, true, true, 85, $adapter);
-        $thumbnail->loadFile($source);
-        $thumbnail->save($dest, $mime);
-        return true;
-      }
+      return false;
     }
-    return false;
+    
+    $width = isset($thumb_options['width']) ? $thumb_options['width'] : null;
+    $height = isset($thumb_options['height']) ? $thumb_options['height'] : null;
+    $options = array('extract' => 1);
+    $scale = true;
+    if (isset($thumb_options['shave']) && $thumb_options['shave'] == true)
+    {
+      $options = array_merge(array('method' => 'shave_all'), $options);
+      $scale = false;
+    }
+    $thumbnail  = new sfThumbnail($width, $height,
+      $scale, true, 85,
+      sfConfig::get('app_lyMediaManager_use_ImageMagick', false) ? 'sfImageMagickAdapter' : 'sfGDAdapter',
+      $options
+    );
+    $thumbnail->loadFile($this->source);
+    $thumbnail->save($this->getThumbnailPath($thumb_type), $this->mime_type);
+    return true;
   }
 }

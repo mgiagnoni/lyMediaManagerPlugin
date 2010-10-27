@@ -115,6 +115,8 @@ Some configuration parameters can be set inside the `app.yml` file of your appli
         allowed_extensions: [jpg,png,gif,txt]
         # only files of these mime-types can be uploaded
         mime_types: [image/jpeg,image/png,image/gif,text/plain]
+        # libray used for thumbnail creation: true ImageMagick, false (default) GD
+        use_ImageMagick: false
 
 Note: `small` and `medium` size thumbnails are used by the plugin itself and should not be removed. More thumbnails of desired sizes can be created for use in your application.
 

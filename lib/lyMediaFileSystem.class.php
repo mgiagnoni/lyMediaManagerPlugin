@@ -140,10 +140,11 @@ class lyMediaFileSystem
    * Renames (or moves) a file and related thumbnails.
    *
    * @param string $src path of source file (can be relative to web dir).
-   * @param string $dest detination path (can be relative to web dir).
-   * @param bool $thumbs, if true thumbnails are also moved/renamed.
+   * @param string $dest destination path (can be relative to web dir).
+   * @param string $src_thumb, source thumbnail file, null if thumbnails are not supported.
+   * @param string $dest_thumb destination thumbnail file.
    */
-  public function rename($src, $dest, $thumbs = false)
+  public function rename($src, $dest, $src_thumb = null, $dest_thumb = null)
   {
     $src = $this->makePathAbsolute($src);
     $dest = $this->makePathAbsolute($dest);
@@ -154,7 +155,7 @@ class lyMediaFileSystem
     }
 
     rename($src, $dest);
-    if($thumbs)
+    if($src_thumb)
     {
       $src_info = pathinfo($src);
       $dest_info = pathinfo($dest);
@@ -168,8 +169,8 @@ class lyMediaFileSystem
       }
       foreach($this->getThumbnailTypes() as $key)
       {
-        $src = $src_path . $key . '_' . $src_info['basename'];
-        $dest = $dest_path . $key . '_' . $dest_info['basename'];
+        $src = $src_path . $key . '_' . $src_thumb;
+        $dest = $dest_path . $key . '_' . $dest_thumb;
 
         if(file_exists($src) && !file_exists($dest))
         {
@@ -206,20 +207,20 @@ class lyMediaFileSystem
    * Deletes a file and related thumbnails.
    *
    * @param string $file path of the file to delete (can be relative to web dir).
-   * @param bool $thumbs, if true thubnail files are also deleted.
+   * @param string $thumb_file, thumbnail file, null if thumbnails are not supported.
    */
-  public function unlink($file, $thumbs = false)
+  public function unlink($file, $thumb_file = null)
   {
     $file = $this->makePathAbsolute($file);
 
-    if($thumbs)
+    if($thumb_file)
     {
       $info = pathinfo($file);
       $path = $info['dirname'] . DIRECTORY_SEPARATOR . lyMediaThumbnails::getThumbnailFolder() . DIRECTORY_SEPARATOR;
 
       foreach($this->getThumbnailTypes() as $key)
       {
-        $tfile = $path . $key . '_' . $info['basename'];
+        $tfile = $path . $key . '_' . $thumb_file;
 
         if(file_exists($tfile))
         {

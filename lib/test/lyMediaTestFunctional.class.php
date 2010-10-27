@@ -24,9 +24,9 @@ class lyMediaTestFunctional extends sfTestFunctional
    *
    * @see checkFile()
    */
-  public function isFile($folder, $file, $check_thumbs = true)
+  public function isFile($asset)
   {
-    return $this->checkFile($folder, $file, $check_thumbs);
+    return $this->checkFile($asset);
   }
 
   /**
@@ -34,9 +34,9 @@ class lyMediaTestFunctional extends sfTestFunctional
    *
    * @see checkFile()
    */
-  public function isntFile($folder, $file, $check_thumbs = true)
+  public function isntFile($asset)
   {
-    return $this->checkFile($folder, $file, $check_thumbs, false);
+    return $this->checkFile($asset, false);
   }
 
   /**
@@ -60,23 +60,26 @@ class lyMediaTestFunctional extends sfTestFunctional
   }
 
   /**
-   * Checks if asset file and thumbnails exist in filesystem.
+   * Checks if asset file and asset thumbnails (if supported) exist in filesystem.
    *
-   * @param string $folder asset folder (relative path)
-   * @param string $file asset filename
-   * @param boolean $check_thumbs check existence/non-existence of thumbnail files
+   * @param lyMediaAsset $asset
    * @param boolean $exist true=must exist, false=must not exist
    * 
    * @return lyMediaTestFunctional current lyMediaTestFunctional instance
    */
-  protected function checkFile($folder, $file, $check_thumbs = true, $exist = true)
+  protected function checkFile($asset, $exist = true)
   {
     $fs = new lyMediaFileSystem();
-    $this->test()->is($fs->is_file($folder . $file), $exist, 'File ' . $folder . $file . ($exist ? ' has ' : ' has not ') . 'been found');
+    $file_path = $asset->getPath();
+    $this->test()->is($fs->is_file($file_path), $exist, 'File ' . $file_path . ($exist ? ' has ' : ' has not ') . 'been found');
 
-    if($check_thumbs)
+    if($asset->supportsThumbnails())
     {
-      $tn = new lyMediaThumbnails($folder, $file);
+      $tn = new lyMediaThumbnails(
+        $file_path,
+        in_array($asset->getType(), array('image/png','image/gif')) ? $asset->getType() : 'image/jpeg',
+        $asset->getThumbnailFile(null)
+      );
       foreach($tn->getThumbnailPaths() as $file_path)
       {
         $this->test()->is($fs->is_file($file_path), $exist, 'Thumbnail ' . basename($file_path) . ($exist ? ' has ' : ' has not ') . 'been found');

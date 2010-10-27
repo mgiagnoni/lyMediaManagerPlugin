@@ -40,7 +40,11 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
     {
       return false;
     }
-    $tn = new lyMediaThumbnails($this->getFolderPath(), $this->getFilename());
+    $tn = new lyMediaThumbnails(
+      $this->getPath(),
+      in_array($this->getType(), array('image/png','image/gif')) ? $this->getType() : 'image/jpeg',
+      $this->getThumbnailFile(null)
+    );
     $tn->generate();
     return true;
   }
@@ -66,7 +70,28 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
   }
 
   /**
-   * Returns asset thumbnail filename.
+   * Returns asset thumbnail extension.
+   * 
+   * @return string
+   */
+  public function getThumbnailExtension()
+  {
+    switch($this->getType())
+    {
+      case 'image/png':
+        $ext = '.png';
+        break;
+      case 'image/gif':
+        $ext = '.gif';
+        break;
+      default:
+        $ext = '.jpg';
+    }
+    return $ext;
+  }
+
+  /**
+   * Returns asset thumbnail filename for a given thumbnail type.
    *
    * @param string $thumb_type thumbnail type.
    */
@@ -76,7 +101,7 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
 
     if($this->supportsThumbnails())
     {
-      $thumbnail = $thumb_type . '_' . $this->getFilename();
+      $thumbnail = $this->buildThumbnailFile($this->getFilename(), $thumb_type);
     }
     else
     {
@@ -119,8 +144,8 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
   public function postDelete($event)
   {
     $record = $event->getInvoker();
-    $fs = new lymediaFileSystem();
-    $fs->unlink($record->getPath(), $record->supportsThumbnails());
+    $fs = new lyMediaFileSystem();
+    $fs->unlink($record->getPath(), $record->supportsThumbnails() ? $record->getThumbnailFile(null) : null);
   }
 
   /**
@@ -164,8 +189,17 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
 
         $src = $src_folder->getRelativePath() . (isset($modified['filename']) ? $modified['filename'] : $record->getFileName());
         $dest = $dest_folder->getRelativePath() . $record->getFileName();
+        $src_thumb = $dest_thumb = null;
+        if($record->supportsThumbnails())
+        {
+          $src_thumb = $dest_thumb = $this->buildThumbnailFile($record->getFilename(), null);
+          if(isset($modified['filename']))
+          {
+            $src_thumb = $this->buildThumbnailFile($modified['filename'], null);
+          }
+        }
         $fs = new lyMediaFileSystem();
-        $fs->rename($src, $dest, $record->supportsThumbnails());
+        $fs->rename($src, $dest, $src_thumb, $dest_thumb);
       }
     }
   }
@@ -185,5 +219,21 @@ abstract class PluginlyMediaAsset extends BaselyMediaAsset
       'image/x-png',
       'image/gif'
       )));
+  }
+
+  protected function buildThumbnailFile($fname, $thumb_type = 'small')
+  {
+    $info = pathinfo($fname);
+    $ext = $this->getThumbnailExtension();
+    if(ltrim($ext, '.') != $info['extension'])
+    {
+      $ext = '.' . $info['extension'] . $ext;
+    }
+    $thumb_fname = $info['filename'] . $ext;
+    if($thumb_type)
+    {
+      $thumb_fname = $thumb_type . '_' . $thumb_fname;
+    }
+    return $thumb_fname;
   }
 }
