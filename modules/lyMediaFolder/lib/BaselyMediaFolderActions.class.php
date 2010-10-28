@@ -56,6 +56,19 @@ abstract class BaselyMediaFolderActions extends autoLyMediaFolderActions
     }
     $this->redirect('@ly_media_asset_icons?folder_id=' . $this->getUser()->getAttribute('folder_id', 0) . ($this->getUser()->getAttribute('popup', 0) ? '&popup=1' : ''));
   }
+
+  /**
+   * Edits a folder
+   *
+   * @param sfWebRequest $request
+   */
+  public function executeEdit(sfWebRequest $request)
+  {
+    $this->ly_media_folder = $this->getRoute()->getObject();
+    $this->forward404Unless($this->ly_media_folder->getLevel() > 0);
+    $this->form = $this->configuration->getForm($this->ly_media_folder);
+  }
+
   /**
    * Deletes a folder.
    *
