@@ -49,7 +49,7 @@ abstract class PluginlyMediaAssetForm extends BaselyMediaAssetForm
     }
 
     $this->widgetSchema['folder_id']->setOption('method','getIndentName');
-    
+    $this->widgetSchema['folder_id']->setOption('order_by',  array('lft', ''));
     if($this->isNew())
     {
       $this->widgetSchema['filename'] = new sfWidgetFormInputFile();

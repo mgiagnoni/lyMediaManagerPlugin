@@ -21,5 +21,6 @@ abstract class PluginlyMediaAssetFormFilter extends BaselyMediaAssetFormFilter
   {
     parent::setup();
     $this->widgetSchema['folder_id']->setOption('method','getIndentName');
+    $this->widgetSchema['folder_id']->setOption('order_by', array('lft', ''));
   }
 }
