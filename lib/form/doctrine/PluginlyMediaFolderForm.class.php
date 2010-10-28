@@ -71,7 +71,7 @@ abstract class PluginlyMediaFolderForm extends BaselyMediaFolderForm
     $this->validatorSchema['name'] = new sfValidatorRegex(array(
       'required' => true,
       'must_match' => false,
-      'pattern' => '#[^a-z0-9-_]#i'
+      'pattern' => '#^' . lyMediaThumbnails::getThumbnailFolder() . '$|[^a-z0-9-_]#i'
     ));
 
     $this->validatorSchema->setPostValidator(new lyMediaValidatorFolder());
