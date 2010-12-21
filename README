@@ -99,10 +99,14 @@ Some configuration parameters can be set inside the `app.yml` file of your appli
         media_root: media
         # thumbnails settings
         thumbnails:
+          mini:
+            width: 32
+            height: 32
+            # forces thumbnail size to fixed width/height values
+            shave: true
           small:
             width: 84
             height: 84
-            # forces thumbnail size to fixed width/height values
             shave: true
           medium:
             width: 194
@@ -118,7 +122,7 @@ Some configuration parameters can be set inside the `app.yml` file of your appli
         # libray used for thumbnail creation: true ImageMagick, false (default) GD
         use_ImageMagick: false
 
-Note: `small` and `medium` size thumbnails are used by the plugin itself and should not be removed. More thumbnails of desired sizes can be created for use in your application.
+Note: `mini`, `small` and `medium` size thumbnails are used by the plugin itself and should not be removed. More thumbnails of desired sizes can be created for use in your application.
 
 ## Customizing views
 
