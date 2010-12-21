@@ -25,6 +25,10 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
   public function executeIndex(sfWebRequest $request)
   {
     $this->getUser()->setAttribute('view', 'list');
+    if($request->getParameter('folder_id'))
+    {
+      $this->setFilters(array('folder_id' => $request->getParameter('folder_id')));
+    }
     parent::executeIndex($request);
   }
   /**
@@ -133,13 +137,15 @@ abstract class BaselyMediaAssetActions extends autoLyMediaAssetActions
       $this->getUser()->setFlash('error', strtr($e->getMessage(), $e->getMessageParams()));
     }
 
-    if($this->getUser()->getAttribute('view') == 'icons')
+    switch($this->getUser()->getAttribute('view'))
     {
-      $this->redirect('@ly_media_asset_icons?folder_id=' . $this->getUser()->getAttribute('folder_id', 0) . ($this->getUser()->getAttribute('popup', 0) ? '&popup=1' : ''));
-    }
-    else
-    {
-      $this->redirect('@ly_media_asset');
+      case 'icons':
+        $this->redirect('@ly_media_asset_icons?folder_id=' . $this->getUser()->getAttribute('folder_id', 0) . ($this->getUser()->getAttribute('popup', 0) ? '&popup=1' : ''));
+        break;
+      case 'folder':
+        $this->redirect('@ly_media_folder');
+      default:
+        $this->redirect('@ly_media_asset');
     }
   }
 

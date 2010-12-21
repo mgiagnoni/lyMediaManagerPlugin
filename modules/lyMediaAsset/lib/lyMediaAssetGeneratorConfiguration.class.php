@@ -21,7 +21,8 @@ class lyMediaAssetGeneratorConfiguration extends BaseLyMediaAssetGeneratorConfig
   {
     return array(
       'upload_root' => sfConfig::get('sf_web_dir') . DIRECTORY_SEPARATOR,
-      'user' => sfContext::getInstance()->getUser()
+      'user' => sfContext::getInstance()->getUser(),
+      'folder_id' => sfContext::getInstance()->getRequest()->getParameter('folder_id'),
     );
   }
 }

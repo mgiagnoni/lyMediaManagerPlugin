@@ -46,4 +46,11 @@ class PluginlyMediaFolderTable extends Doctrine_Table
     }
     return $folder;
   }
+  public function retrieveFolderList(Doctrine_Query $q)
+  {
+    $alias = $q->getRootAlias();
+    $q->leftJoin($alias . '.Assets a');
+    $q->orderBy($alias . '.lft');
+    return $q;
+  }
 }

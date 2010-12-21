@@ -17,6 +17,11 @@
  */
 abstract class BaselyMediaFolderActions extends autoLyMediaFolderActions
 {
+  public function executeIndex(sfWebRequest $request)
+  {
+    $this->getUser()->setAttribute('view', 'folder');
+    parent::executeIndex($request);
+  }
   public function executeAdd(sfWebRequest $request)
   {
     $parent = lyMediaFolderTable::getInstance()
@@ -82,18 +87,58 @@ abstract class BaselyMediaFolderActions extends autoLyMediaFolderActions
 
     $this->dispatcher->notify(new sfEvent($this, 'admin.delete_object', array('object' => $object)));
 
-    $redir = '@ly_media_asset_icons?folder_id=' . $this->getUser()->getAttribute('folder_id', 0) . ($this->getUser()->getAttribute('popup', 0) ? '&popup=1' : '');
+    switch($this->getuser()->getAttribute('view') == 'icons')
+    {
+      case 'icons':
+        $redir = '@ly_media_asset_icons?folder_id=' . $this->getUser()->getAttribute('folder_id', 0) . ($this->getUser()->getAttribute('popup', 0) ? '&popup=1' : '');
+        break;
+      default:
+        $redir = '@ly_media_folder';
+    }
 
+    if($this->deleteNode($object))
+    {
+      $this->getUser()->setFlash('notice', 'Folder successfully deleted.');
+    }
+
+    $this->redirect($redir);
+  }
+  public function executeUpload(sfWebRequest $request)
+  {
+    $this->redirect('@ly_media_asset_new?folder_id=' . $request->getParameter('id'));
+  }
+  protected function executeBatchDelete(sfWebRequest $request)
+  {
+    $ids = $request->getParameter('ids');
+    $table = lyMediaFolderTable::getInstance();
+
+    foreach ($ids as $id)
+    {
+      $object = $table->find($id);
+      if($object)
+      {
+        if(!$this->deleteNode($object))
+        {
+          $this->redirect('@ly_media_folder');
+        }
+      }
+    }
+
+    $this->getUser()->setFlash('notice', 'The selected items have been deleted successfully.');
+    $this->redirect('@ly_media_folder');
+  }
+  protected function deleteNode($object)
+  {
     if ($object->getNode()->isValidNode())
     {
       if($object->getNode()->getDescendants() !== false)
       {
-        $this->getUser()->setFlash('error', 'Can\'t delete folder as it contains sub-folders.');
-        $this->redirect($redir);
+        $this->getUser()->setFlash('error', "Can't delete folder {$object->getRelativePath()} as it contains sub-folders.");
+        return false;
       }
-      
+
       $object = $object->getNode();
-    } 
+    }
 
     try
     {
@@ -102,10 +147,9 @@ abstract class BaselyMediaFolderActions extends autoLyMediaFolderActions
     catch(lyMediaException $e)
     {
       $this->getUser()->setFlash('error', strtr($e->getMessage(), $e->getMessageParams()));
-      $this->redirect($redir);
+      return false;
     }
-    $this->getUser()->setFlash('notice', 'Folder successfully deleted.');
 
-    $this->redirect($redir);
+    return true;
   }
 }

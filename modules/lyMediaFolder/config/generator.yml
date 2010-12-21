@@ -12,6 +12,17 @@ generator:
 
     config:
       list:
+        fields:
+          ct_assets: {label: Media}
+          folder: {label: false}
+          td_folder: {label: false}
+        table_method: retrieveFolderList
+        title: Folders
+        display: [_td_folder,name,_ct_assets,title]
+        object_actions:
+          _edit: ~
+          _delete: ~
+          upload: {action: upload}
         actions:
           _new: ~
       form: ~

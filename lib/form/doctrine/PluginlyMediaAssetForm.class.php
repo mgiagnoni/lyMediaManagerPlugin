@@ -60,12 +60,9 @@ abstract class PluginlyMediaAssetForm extends BaselyMediaAssetForm
         'allowed_extensions' => lyMediaTools::getAllowedExtensions()
       ));
 
-      if($user = $this->getOption('user'))
+      if($this->getOption('folder_id'))
       {
-        if($user->getAttribute('view') == 'icons' && $user->getAttribute('folder_id'))
-        {
-          $this->setDefault('folder_id', $user->getAttribute('folder_id'));
-        }
+        $this->setDefault('folder_id', $this->getOption('folder_id'));
       }
     }
     else

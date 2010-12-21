@@ -11,12 +11,13 @@ generator:
     with_doctrine_route:   true
 
     config:
-      fields:
-        td_image: {label: Image}
       list:
+        fields:
+          td_image: {label: false}
+          created_at: {label: Date, date_format: dd MMM yyy HH:mm}
         table_method: retrieveAssetList
         title: Media Manager
-        display: [_td_image, title, description]
+        display: [_td_image,filename,title,created_at]
         object_actions:
           _edit: ~
           _delete: ~

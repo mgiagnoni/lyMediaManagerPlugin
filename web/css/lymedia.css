@@ -196,6 +196,10 @@
   background: url(../images/download.png) no-repeat left center;
   
 }
+#sf_admin_container ul.sf_admin_td_actions li.sf_admin_action_upload a
+{
+  background: url(../images/upload.png) no-repeat left center;
+}
 .sf_admin_filter
 {
   margin-left: 5px;
@@ -233,6 +237,35 @@
 {
   clear: both;
   padding-top: 12px;
+}
+#sf_admin_container tr.sf_admin_row_asset
+{
+  /*background-color: #ffe;*/
+  background-color: #f5f5f5;
+}
+tr.sf_admin_row img.level0
+{
+  margin-left: 0;
+}
+tr.sf_admin_row img.level1
+{
+  margin-left: 10px;
+}
+tr.sf_admin_row img.level2
+{
+  margin-left: 20px;
+}
+tr.sf_admin_row img.level3
+{
+  margin-left: 30px;
+}
+tr.sf_admin_row img.level4
+{
+  margin-left: 40px;
+}
+#sf_admin_container #sf_admin_list_th_actions
+{
+  text-align: center;
 }
 /*Patched here maybe a wrong selector in
 default.css of Doctrine admin generator */

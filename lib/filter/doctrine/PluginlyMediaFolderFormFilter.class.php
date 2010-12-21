@@ -17,4 +17,9 @@
  */
 abstract class PluginlyMediaFolderFormFilter extends BaselyMediaFolderFormFilter
 {
+  public function setup()
+  {
+    parent::setup();
+    unset($this['lft'],$this['rgt'],$this['level'],$this['relative_path']);
+  }
 }

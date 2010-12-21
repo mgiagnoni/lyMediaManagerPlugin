@@ -24,6 +24,10 @@ class lyMediaFolderGeneratorHelper extends BaseLyMediaFolderGeneratorHelper
     {
       return '<li class="sf_admin_action_list">'.link_to(__('Go back'), '@ly_media_asset_icons?folder_id=' . $user->getAttribute('folder_id', 0) . ($user->getAttribute('popup', 0) ? '&popup=1' : '')) . '</li>';
     }
+    elseif($user->getAttribute('view') == 'folder')
+    {
+      return '<li class="sf_admin_action_list">'.link_to(__('Go back'), '@ly_media_folder') .'</li>';
+    }
     else
     {
       return '<li class="sf_admin_action_list">'.link_to(__('Go back'), '@ly_media_asset') . '</li>';
