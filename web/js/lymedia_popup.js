@@ -10,6 +10,10 @@ var FileBrowserDialogue = {
           if(el.className.indexOf('lymedia_asset_frame') != -1)
           {
             el.onclick = function(event) {
+              if(!event)
+              {
+                event = window.event;
+              }
               var mn = document.getElementById('lymedia_thumb_menu');
               mn.style.left = event.clientX + 'px';
               mn.style.top = event.clientY + 'px';
